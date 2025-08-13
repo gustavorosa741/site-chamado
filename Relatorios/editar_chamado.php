@@ -77,7 +77,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             font-size: 14px;
         }
 
-        input[type="text"] {
+        input[type="text"],
+        input[type="date"], 
+        select{
             padding: 10px;
             border: 1px solid #253236;
             border-radius: 5px;
@@ -86,7 +88,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             transition: border-color 0.3s ease, box-shadow 0.3s ease;
         }
 
-        input[type="text"]:focus {
+        input[type="text"],
+        input[type="date"], :focus {
             border-color: #3399ff;
             box-shadow: 0 0 5px rgba(51, 153, 255, 0.5);
             outline: none;
