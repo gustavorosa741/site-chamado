@@ -11,7 +11,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->bind_param("ss", $nome, $setor);
 
     if ($stmt->execute()) {
-        echo "<script>alert('Máquina cadastrada com sucesso!'); window.location.href='cadastros/cadastro_maquina.html';</script>";
+        echo "<script>alert('Máquina cadastrada com sucesso!'); window.location.href='../cadastros/cadastro_maquina.html';</script>";
     } else {
         echo "Erro: " . $stmt->error;
     }
