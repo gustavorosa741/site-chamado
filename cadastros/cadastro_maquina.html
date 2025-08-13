@@ -30,8 +30,7 @@
             width: 350px;
             display: flex;
             flex-direction:column;
-            text-align: right;
-            gap: 20px;
+            text-align: left;
         }
 
         label {
@@ -77,19 +76,14 @@
     <h1>Cadastro de Máquina</h1>
 
     <form class="form-container" action="../BD/cadastro_maquina.php" method="post">
+        <label for="nome">Nome da Máquina:</label>
+        <input type="text" id="nome" name="nome"required><br>
 
-        <div>
-            <label for="nome">Nome da Máquina:</label>
-            <input type="text" id="nome" name="nome" required>
-        </div>
+        <label for="setor">Setor:</label>
+        <input type="text" id="setor" name="setor" required><br>
 
-        <div>
-            <label for="setor">Setor:</label>
-            <input type="text" id="setor" name="setor" required>
-        </div>
-
-        <button type="submit">Cadastrar</button>
-        <button type="button" onclick="window.location.href='../index.html'">Voltar</button>
+        <button type="submit">Cadastrar</button><br>
+        <button type="button" onclick="window.location.href='../index.html'">Voltar</button><br>
     </form>
 
 </body>
