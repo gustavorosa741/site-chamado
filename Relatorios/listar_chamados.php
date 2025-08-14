@@ -90,7 +90,7 @@ $result = $conn->query($sql);
         <?php else: ?>
             <tr><td colspan="4">Nenhum chamado cadastrado.</td></tr>
         <?php endif; ?>
-        <button type="button" onclick="window.location.href='../index.html'">Voltar</button>
+        <button type="button" onclick="window.location.href='../pagina_principal.html'">Voltar</button>
     </tbody>
 </table>
 

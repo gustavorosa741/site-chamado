@@ -134,7 +134,7 @@ $conn->close();
         <input type="text" id="problema" name="problema" required>
 
         <button type="submit">Cadastrar</button>
-        <button type="button" onclick="window.location.href='../index.html'">Voltar</button>
+        <button type="button" onclick="window.location.href='../pagina_principal.html'">Voltar</button>
     </form>
 
 </body>
