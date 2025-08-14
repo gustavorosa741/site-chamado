@@ -1,4 +1,16 @@
 <?php
-// Redireciona direto para a página principal
-header("Location: pagina_principal.html");
-exit;
+$modo_teste = true; // coloque false para voltar ao normal
+
+if ($modo_teste) {
+    header("Location: pagina_principal.html");
+    exit;
+}
+
+if (!isset($_SESSION['usuario_id'])) {
+    header("Location: login.php");
+    exit;
+}
+
+session_start();
+
+?>

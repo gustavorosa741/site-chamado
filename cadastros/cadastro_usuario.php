@@ -4,6 +4,12 @@ include '../BD/conexao.php';
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $usuario = $_POST['usuario'];
     $senha = $_POST['senha'];
+    $confirmar_senha = $_POST['confirmar_senha'];
+
+    if ($senha != $confirmar_senha) {
+        echo "<script>alert('As senhas não coincidem!'); window.location.href='cadastro_usuario.php'</script>";
+
+    } else {
 
     // Criptografa a senha
     $senha_hash = password_hash($senha, PASSWORD_DEFAULT);
@@ -20,6 +26,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $stmt->close();
     $conn->close();
+    }
 }
 ?>
 
@@ -27,22 +34,97 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Cadastro de Usuário</title>
+    <title>Cadastro de Usuario</title>
     <style>
-        /* mesmo layout do chamado */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f8ff;
+            color: #003366;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        h1 {
+            margin-top: 40px;
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+
+        .form-container {
+            background-color: white;
+            padding: 30px 40px;
+            border-radius: 10px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            width: 350px;
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+        }
+
+        label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+
+        input[type="text"],
+        input[type="password"],
+        select {
+            padding: 10px;
+            border: 1px solid #253236;
+            border-radius: 5px;
+            font-size: 14px;
+            color: #003366;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            margin-bottom: 15px;
+        }
+
+        input:focus,
+        select:focus {
+            border-color: #3399ff;
+            box-shadow: 0 0 5px rgba(51, 153, 255, 0.5);
+            outline: none;
+        }
+
+        button {
+            padding: 12px;
+            background-color: #3399ff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #267acc;
+        }
     </style>
 </head>
 <body>
-    <h1>Cadastro de Usuário</h1>
-    <form class="form-container" action="" method="post">
+
+    <h1>Cadastro de Usuario/h1>
+        <form class="form-container" action="" method="post">
+
         <label for="usuario">Usuário:</label>
         <input type="text" id="usuario" name="usuario" required>
 
         <label for="senha">Senha:</label>
         <input type="password" id="senha" name="senha" required>
 
+        <label>Confirmar Senha:</label>
+        <input type="password" id="confirmar_senha" name="confirmar_senha" required>
+
         <button type="submit">Cadastrar</button>
         <button type="button" onclick="window.location.href='../pagina_principal.html'">Voltar</button>
     </form>
+
 </body>
 </html>
