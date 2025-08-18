@@ -13,10 +13,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $data_abertura = $_POST['data_abertura']?? '';
     $data_fechamento = $_POST['data_fechamento'] ?? '';
     $problema = $_POST['problema'] ?? '';
-    $fechamento = $_POST['fechamento'] ?? '';
+    $solucao = $_POST['solucao'] ?? '';
 
-    $stmt = $conn->prepare("UPDATE chamado SET id_maquina = ?, categoria = ?, data_abertura = ?, data_fechamento = ?, problema = ?, fechamento = ?, WHERE id = ?");
-    $stmt->bind_param("ssi", $id_maquina, $categoria, $data_abertura, $data_fechamento, $problema, $fechamento);
+    $stmt = $conn->prepare("UPDATE chamado SET id_maquina = ?, categoria = ?, data_abertura = ?, data_fechamento = ?, problema = ?, solucao = ?, WHERE id = ?");
+    $stmt->bind_param("ssi", $id_maquina, $categoria, $data_abertura, $data_fechamento, $problema, $solucao);
 
     if ($stmt->execute()) {
         header("Location: listar_chamados.php");
@@ -26,10 +26,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 } else {
     // Busca os dados para preencher o formulário
-    $stmt = $conn->prepare("SELECT id_maquina, categoria, data_abertura, data_fechamento, problema, fechamento FROM chamado WHERE id = ?");
+    $stmt = $conn->prepare("SELECT id_maquina, categoria, data_abertura, data_fechamento, problema, solucao FROM chamado WHERE id = ?");
     $stmt->bind_param("i", $id);
     $stmt->execute();
-    $stmt->bind_result($id_maquina, $categoria, $data_abertura, $data_fechamento, $problema, $fechamento);
+    $stmt->bind_result($id_maquina, $categoria, $data_abertura, $data_fechamento, $problema, $solucao);
     $stmt->fetch();
     $stmt->close();
 }
@@ -132,8 +132,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <label for="problema">Problema:</label>
     <input type="text" id="problema" name="problema" value="<?= htmlspecialchars($problema) ?>" required><br>
 
-    <label for="fechamento">Fechamento:</label>
-    <input type="text" id="fechamento" name="fechamento" value="<?= htmlspecialchars($fechamento) ?>" required><br>
+    <label for="solucao">Solução:</label>
+    <input type="text" id="solucao" name="solucao" value="<?= htmlspecialchars($solucao) ?>" required><br>
 
     <button type="submit">Salvar</button><br>
     <button type="button" onclick="window.location.href='listar_chamados.php'">Cancelar</button><br>
