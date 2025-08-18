@@ -2,6 +2,7 @@
 include '../BD/conexao.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $nome = $_POST['nome'];
     $usuario = $_POST['usuario'];
     $senha = $_POST['senha'];
     $confirmar_senha = $_POST['confirmar_senha'];
@@ -14,12 +15,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Criptografa a senha
     $senha_hash = password_hash($senha, PASSWORD_DEFAULT);
 
-    $sql = "INSERT INTO usuario (usuario, senha) VALUES (?, ?)";
+    $sql = "INSERT INTO usuario (nome, usuario, senha) VALUES (?, ?, ?)";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("ss", $usuario, $senha_hash);
+    $stmt->bind_param("sss", $nome, $usuario, $senha_hash);
 
     if ($stmt->execute()) {
-        echo "<script>alert('Usuário cadastrado com sucesso!'); window.location.href='../pagina_principal.html';</script>";
+        echo "<script>alert('Usuário cadastrado com sucesso!'); window.location.href='../pagina_principal.php';</script>";
     } else {
         echo "Erro ao cadastrar: " . $stmt->error;
     }
@@ -112,6 +113,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     <h1>Cadastro de Usuario </h1>
         <form class="form-container" action="" method="post">
+
+        <label for="nome">Nome:</label>
+        <input type="text" id="nome" name="nome" required>
 
         <label for="usuario">Usuário:</label>
         <input type="text" id="usuario" name="usuario" required>
