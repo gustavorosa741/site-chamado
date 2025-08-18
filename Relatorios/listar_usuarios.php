@@ -78,7 +78,7 @@ $result = $conn->query($sql);
         <?php else: ?>
             <tr><td colspan="4">Nenhum usuário cadastrado.</td></tr>
         <?php endif; ?>
-        <button type="button" onclick="window.location.href='../pagina_principal.html'">Voltar</button>
+        <button type="button" onclick="window.location.href='../pagina_principal.php'">Voltar</button>
     </tbody>
 </table>
 

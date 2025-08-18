@@ -2,7 +2,7 @@
 $modo_teste = true; // coloque false para voltar ao normal
 
 if ($modo_teste) {
-    header("Location: pagina_principal.html");
+    header("Location: pagina_principal.php");
     exit;
 }
 

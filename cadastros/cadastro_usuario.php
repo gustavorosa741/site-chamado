@@ -110,7 +110,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </head>
 <body>
 
-    <h1>Cadastro de Usuario/h1>
+    <h1>Cadastro de Usuario </h1>
         <form class="form-container" action="" method="post">
 
         <label for="usuario">Usuário:</label>
@@ -123,7 +123,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <input type="password" id="confirmar_senha" name="confirmar_senha" required>
 
         <button type="submit">Cadastrar</button>
-        <button type="button" onclick="window.location.href='../pagina_principal.html'">Voltar</button>
+        <button type="button" onclick="window.location.href='../pagina_principal.php'">Voltar</button>
     </form>
 
 </body>

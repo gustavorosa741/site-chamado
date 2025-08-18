@@ -7,10 +7,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $maquina_id = $_POST['maquina'];
     $data = $_POST['data'];
     $problema = $_POST['problema'];
+    $categoria = $_POST['categoria'];
+    $progresso = 'Aberto';
 
-    $sql = "INSERT INTO chamado (id_maquina, data_abertura, problema) VALUES (?, ?, ?)";
+    $sql = "INSERT INTO chamado (id_maquina, data_abertura, problema, categoria, progresso) VALUES (?, ?, ?, ?, ?)";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("iss", $maquina_id, $data, $problema);
+    $stmt->bind_param("issss", $maquina_id, $data, $problema, $categoria, $progresso);
 
     if ($stmt->execute()) {
         echo "<script>alert('Chamado cadastrado com sucesso!'); window.location.href='../cadastros/cadastro_chamado.php';</script>";
@@ -30,6 +32,17 @@ if ($result && $result->num_rows > 0) {
         $maquinas[] = $row;
     }
 }
+
+// Busca todas as categorias para o dropdown
+$categoria_chamado = [];
+$sql_categoria = "SELECT id, categoria FROM categoria_chamado";
+$result = $conn->query($sql_categoria);
+    if ($result && $result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            $categoria_chamado[] = $row;
+        }
+    }
+
 
 $conn->close();
 ?>
@@ -133,8 +146,19 @@ $conn->close();
         <label for="problema">Problema:</label>
         <input type="text" id="problema" name="problema" required>
 
+        <label for="categoria">Categoria:</label>
+        <select id="categoria" name="categoria" required>
+            <option value="">-- Selecione uma categoria --</option>
+            <?php foreach ($categoria_chamado as $categoria): ?>
+                <option value="<?= htmlspecialchars($categoria['id']) ?>">
+                    <?= htmlspecialchars($categoria['categoria']) ?>
+                </option>
+            <?php endforeach; ?>
+        </select>
+                
+
         <button type="submit">Cadastrar</button>
-        <button type="button" onclick="window.location.href='../pagina_principal.html'">Voltar</button>
+        <button type="button" onclick="window.location.href='../pagina_principal.php'">Voltar</button>
     </form>
 
 </body>
