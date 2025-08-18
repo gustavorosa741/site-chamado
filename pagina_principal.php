@@ -403,6 +403,14 @@ $conn->close();
                                     <span class="chamado-label">Data Abertura:</span>
                                     <span><?= date('d/m/Y', strtotime($chamado['data_abertura']))?></span>
                                 </div>
+                                <div class="chamado-info">
+                                    <span class = "chamado-label">Solução:</span>
+                                    <span><?= htmlspecialchars($chamado['solucao'])?></span>
+                                </div>
+                                <div class="chamado-info">
+                                    <span class="chamado-label">Data Fechamento:</span>
+                                    <span><?= date('d/m/Y', strtotime($chamado['data_fechamento']))?></span>
+                                </div>
                                 <br>
                                 <div class="chamado-mover_direita">
                                     <a class="button" href="comandos_chamados/mover_espera.php?id=<?= $chamado['id'] ?>"><<<</a>
