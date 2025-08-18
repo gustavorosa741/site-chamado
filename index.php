@@ -1,5 +1,5 @@
 <?php
-$modo_teste = true; // coloque false para voltar ao normal
+$modo_teste = false; // coloque false para voltar ao normal
 
 if ($modo_teste) {
     header("Location: pagina_principal.php");

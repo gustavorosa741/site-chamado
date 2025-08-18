@@ -20,7 +20,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if (password_verify($senha, $senha_hash)) {
             $_SESSION['usuario_id'] = $id;
             $_SESSION['usuario_nome'] = $usuario;
-            header("Location: ../pagina_principal.html");
+            header("Location: ../pagina_principal.php");
             exit;
         } else {
             echo "<script>alert('Senha incorreta!');</script>";
