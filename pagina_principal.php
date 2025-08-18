@@ -12,7 +12,8 @@ $sql = "SELECT c.*, m.nome_maquina, m.setor, a.categoria
         FROM chamado c
         LEFT JOIN maquina m ON c.id_maquina = m.id
         LEFT JOIN categoria_chamado a ON c.categoria = a.id
-        ORDER BY c.data_abertura DESC";
+        ORDER BY c.data_abertura ";
+
 $result = $conn->query($sql);
 
 if ($result && $result->num_rows > 0) {
@@ -288,26 +289,40 @@ $conn->close();
             <div class="status-column">
                 <div class="status-title andamento-title">Em Andamento</div>
                 <div class="chamados-container" id="andamento-container">
-                    <div class="chamado-card andamento">
-                        <div class="chamado-header">
-                            <span class="chamado-id">#CHM-2023-005</span>
-                            <span class="chamado-data">20/10/2023</span>
+                    <?php foreach ($chamados['Em andamento'] as $chamado): ?>
+                        <div class="chamado-card andamento">    
+                            <div class="chamado-header">
+                                <span class="chamado-id">#ID-<?= str_pad($chamado['id'], 3, '0', STR_PAD_LEFT) ?></span>
+                                <span class="chamado-data"><?= date('d/m/Y', strtotime($chamado['data_abertura'])) ?></span>
+                            </div>
+                            <div class="chamado-body">
+                                <div class="chamado-info">
+                                    <span class="chamado-label">Máquina:</span>
+                                    <span><?= htmlspecialchars($chamado['nome_maquina']) ?></span>
+                                </div>
+                                <div class="chamado-info">
+                                    <span class="chamado-label">Categoria:</span>
+                                    <span><?= htmlspecialchars($chamado['categoria']) ?></span>
+                                </div>
+                                <div class="chamado-info">
+                                    <span class="chamado-label">Solicitante:</span>
+                                    <span><?= htmlspecialchars($chamado['id_funcionario']) ?></span>
+                                </div>
+                                <div class="chamado-info">
+                                    <span class = "chamado-label">Problema:</span>
+                                    <span><?= htmlspecialchars($chamado['problema'])?></span>
+                                </div>
+                                <div class="chamado-info">
+                                    <span class="chamado-label">Data Abertura:</span>
+                                    <span><?= date('d/m/Y', strtotime($chamado['data_abertura']))?></span>
+                                </div>
+                                <div class="chamado-mover_esquerda">
+                                    <a class="button" href="comandos_chamados/mover_aberto.php?id=<?= $chamado['id'] ?>"><<<</a>
+                                    <a class="button" href="comandos_chamados/mover_espera.php?id=<?= $chamado['id'] ?>">>>></a>
+                                </div>
+                            </div>
                         </div>
-                        <div class="chamado-body">
-                            <div class="chamado-info">
-                                <span class="chamado-label">Máquina:</span>
-                                <span>Terminal POS 02</span>
-                            </div>
-                            <div class="chamado-info">
-                                <span class="chamado-label">Categoria:</span>
-                                <span>Atualização de Software</span>
-                            </div>
-                            <div class="chamado-info">
-                                <span class="chamado-label">Técnico:</span>
-                                <span>Carlos Oliveira</span>
-                            </div>
-                        </div>
-                    </div>
+                    <?php endforeach; ?>
                 </div>
             </div>
 
@@ -315,58 +330,82 @@ $conn->close();
             <div class="status-column">
                 <div class="status-title espera-title">Aguardando Peças</div>
                 <div class="chamados-container" id="espera-container">
-                    <div class="chamado-card espera">
-                        <div class="chamado-header">
-                            <span class="chamado-id">#CHM-2023-003</span>
-                            <span class="chamado-data">22/10/2023</span>
+                    <?php foreach ($chamados['Espera'] as $chamado): ?>
+                        <div class="chamado-card espera">    
+                            <div class="chamado-header">
+                                <span class="chamado-id">#ID-<?= str_pad($chamado['id'], 3, '0', STR_PAD_LEFT) ?></span>
+                                <span class="chamado-data"><?= date('d/m/Y', strtotime($chamado['data_abertura'])) ?></span>
+                            </div>
+                            <div class="chamado-body">
+                                <div class="chamado-info">
+                                    <span class="chamado-label">Máquina:</span>
+                                    <span><?= htmlspecialchars($chamado['nome_maquina']) ?></span>
+                                </div>
+                                <div class="chamado-info">
+                                    <span class="chamado-label">Categoria:</span>
+                                    <span><?= htmlspecialchars($chamado['categoria']) ?></span>
+                                </div>
+                                <div class="chamado-info">
+                                    <span class="chamado-label">Solicitante:</span>
+                                    <span><?= htmlspecialchars($chamado['id_funcionario']) ?></span>
+                                </div>
+                                <div class="chamado-info">
+                                    <span class = "chamado-label">Problema:</span>
+                                    <span><?= htmlspecialchars($chamado['problema'])?></span>
+                                </div>
+                                <div class="chamado-info">
+                                    <span class="chamado-label">Data Abertura:</span>
+                                    <span><?= date('d/m/Y', strtotime($chamado['data_abertura']))?></span>
+                                </div>
+                                <div class="chamado-mover_esquerda">
+                                    <a class="button" href="comandos_chamados/mover_andamento.php?id=<?= $chamado['id'] ?>"><<<</a>
+                                    <a class="button" href="comandos_chamados/mover_concluido.php?id=<?= $chamado['id'] ?>">>>></a>
+                                </div>
+                            </div>
                         </div>
-                        <div class="chamado-body">
-                            <div class="chamado-info">
-                                <span class="chamado-label">Máquina:</span>
-                                <span>Leitor de Códigos 01</span>
-                            </div>
-                            <div class="chamado-info">
-                                <span class="chamado-label">Categoria:</span>
-                                <span>Substituição de Peça</span>
-                            </div>
-                            <div class="chamado-info">
-                                <span class="chamado-label">Peça Pendente:</span>
-                                <span>Lente do Leitor</span>
-                            </div>
-                        </div>
-                    </div>
+                    <?php endforeach; ?>
                 </div>
             </div>
 
             <!-- Coluna de Chamados Concluídos -->
             <div class="status-column">
                 <div class="status-title concluido-title">Concluídos</div>
-                <div class="chamados-container" id="concluidos-container">
-                    <div class="chamado-card concluido">
-                        <div class="chamado-header">
-                            <span class="chamado-id">#CHM-2023-004</span>
-                            <span class="chamado-data">18/10/2023</span>
+                <div class="chamados-container" id="concluido-container">
+                    <?php foreach ($chamados['Concluido'] as $chamado): ?>
+                        <div class="chamado-card concluido">    
+                            <div class="chamado-header">
+                                <span class="chamado-id">#ID-<?= str_pad($chamado['id'], 3, '0', STR_PAD_LEFT) ?></span>
+                                <span class="chamado-data"><?= date('d/m/Y', strtotime($chamado['data_abertura'])) ?></span>
+                            </div>
+                            <div class="chamado-body">
+                                <div class="chamado-info">
+                                    <span class="chamado-label">Máquina:</span>
+                                    <span><?= htmlspecialchars($chamado['nome_maquina']) ?></span>
+                                </div>
+                                <div class="chamado-info">
+                                    <span class="chamado-label">Categoria:</span>
+                                    <span><?= htmlspecialchars($chamado['categoria']) ?></span>
+                                </div>
+                                <div class="chamado-info">
+                                    <span class="chamado-label">Solicitante:</span>
+                                    <span><?= htmlspecialchars($chamado['id_funcionario']) ?></span>
+                                </div>
+                                <div class="chamado-info">
+                                    <span class = "chamado-label">Problema:</span>
+                                    <span><?= htmlspecialchars($chamado['problema'])?></span>
+                                </div>
+                                <div class="chamado-info">
+                                    <span class="chamado-label">Data Abertura:</span>
+                                    <span><?= date('d/m/Y', strtotime($chamado['data_abertura']))?></span>
+                                </div>
+                                <div class="chamado-mover_esquerda">
+                                    <a class="button" href="comandos_chamados/mover_espera.php?id=<?= $chamado['id'] ?>"><<<</a>
+                                </div>
+                            </div>
                         </div>
-                        <div class="chamado-body">
-                            <div class="chamado-info">
-                                <span class="chamado-label">Máquina:</span>
-                                <span>Caixa Registradora 05</span>
-                            </div>
-                            <div class="chamado-info">
-                                <span class="chamado-label">Categoria:</span>
-                                <span>Configuração</span>
-                            </div>
-                            <div class="chamado-info">
-                                <span class="chamado-label">Técnico:</span>
-                                <span>Ana Santos</span>
-                            
-                            </div>
-                        </div>
-                    </div>
+                    <?php endforeach; ?>
                 </div>
             </div>
-        </div>
-    </div>
 
     <script>
         function navegarCadastro(url) {
