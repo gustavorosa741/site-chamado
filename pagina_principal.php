@@ -228,6 +228,7 @@ $conn->close();
                     <option value="cadastros/cadastro_chamado.php">Cadastrar Chamado</option>
                     <option value="cadastros/cadastro_maquina.php">Cadastrar Máquina</option>
                     <option value="cadastros/cadastro_usuario.php">Cadastrar Usuário</option>
+                    <option value="cadastros/cadastro_categoria.php">Cadastrar Categoria</option>
                 </select>
             </div>
 
@@ -238,6 +239,7 @@ $conn->close();
                     <option value="Relatorios/listar_chamados.php">Chamados</option>
                     <option value="Relatorios/listar_maquinas.php">Máquinas</option>
                     <option value="Relatorios/listar_usuarios.php">Usuários</option>
+                    <option value="Relatorios/listar_categoria.php">Categoria</option>
                 </select>
             </div>
         </div>
