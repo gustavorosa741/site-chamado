@@ -8,6 +8,7 @@ if (!isset($_GET['id'])) {
 $id = intval($_GET['id']);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $id = $_POST['id_maquina'] ?? '';
     $id_maquina = $_POST['id_maquina'] ?? '';
     $categoria = $_POST['categoria'] ?? '';
     $data_abertura = $_POST['data_abertura']?? '';
@@ -15,8 +16,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $problema = $_POST['problema'] ?? '';
     $solucao = $_POST['solucao'] ?? '';
 
-    $stmt = $conn->prepare("UPDATE chamado SET id_maquina = ?, categoria = ?, data_abertura = ?, data_fechamento = ?, problema = ?, solucao = ?, WHERE id = ?");
-    $stmt->bind_param("ssi", $id_maquina, $categoria, $data_abertura, $data_fechamento, $problema, $solucao);
+    $stmt = $conn->prepare("UPDATE chamado SET id_maquina = ?, categoria = ?, data_abertura = ?, data_fechamento = ?, problema = ?, solucao = ? WHERE id = ?");
+    $stmt->bind_param("ssssssi", $id_maquina, $categoria, $data_abertura, $data_fechamento, $problema, $solucao, $id);
 
     if ($stmt->execute()) {
         header("Location: listar_chamados.php");
