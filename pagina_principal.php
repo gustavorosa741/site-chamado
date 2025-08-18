@@ -8,9 +8,10 @@ $chamados = [
     'Concluído' => []
 ];
 
-$sql = "SELECT c.*, m.nome_maquina 
+$sql = "SELECT c.*, m.nome_maquina, m.setor, a.categoria
         FROM chamado c
         LEFT JOIN maquina m ON c.id_maquina = m.id
+        LEFT JOIN categoria_chamado a ON c.categoria = a.id
         ORDER BY c.data_abertura DESC";
 $result = $conn->query($sql);
 
@@ -176,6 +177,22 @@ $conn->close();
             min-width: 100px;
         }
 
+        .chamado-mover-direita {
+            float: right;
+        }
+
+        .button {
+        background-color: #4ECDC4;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 4px;
+        text-decoration: none;
+        font-weight: bold;
+        }
+        .button:hover {
+            background-color: #3aa89f;
+        }
+
         @media (max-width: 1200px) {
             .status-columns {
                 flex-wrap: wrap;
@@ -234,7 +251,7 @@ $conn->close();
                     <?php foreach ($chamados['Aberto'] as $chamado): ?>
                         <div class="chamado-card aberto">
                             <div class="chamado-header">
-                                <span class="chamado-id">#CHM-<?= str_pad($chamado['id'], 3, '0', STR_PAD_LEFT) ?></span>
+                                <span class="chamado-id">#ID-<?= str_pad($chamado['id'], 3, '0', STR_PAD_LEFT) ?></span>
                                 <span class="chamado-data"><?= date('d/m/Y', strtotime($chamado['data_abertura'])) ?></span>
                             </div>
                             <div class="chamado-body">
@@ -245,6 +262,21 @@ $conn->close();
                                 <div class="chamado-info">
                                     <span class="chamado-label">Categoria:</span>
                                     <span><?= htmlspecialchars($chamado['categoria']) ?></span>
+                                </div>
+                                <div class="chamado-info">
+                                    <span class="chamado-label">Solicitante:</span>
+                                    <span><?= htmlspecialchars($chamado['id_funcionario']) ?></span>
+                                </div>
+                                <div class="chamado-info">
+                                    <span class = "chamado-label">Problema:</span>
+                                    <span><?= htmlspecialchars($chamado['problema'])?></span>
+                                </div>
+                                <div class="chamado-info">
+                                    <span class="chamado-label">Data Abertura:</span>
+                                    <span><?= date('d/m/Y', strtotime($chamado['data_abertura']))?></span>
+                                </div>
+                                <div class="chamado-mover_direita">
+                                    <a class="button" href="comandos_chamados/mover_andamento.php?id=<?= $chamado['id'] ?>">>>></a>
                                 </div>
                             </div>
                         </div>
@@ -327,6 +359,7 @@ $conn->close();
                             <div class="chamado-info">
                                 <span class="chamado-label">Técnico:</span>
                                 <span>Ana Santos</span>
+                            
                             </div>
                         </div>
                     </div>
