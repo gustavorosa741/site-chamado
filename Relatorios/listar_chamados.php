@@ -2,7 +2,12 @@
 include '../BD/conexao.php';
 
 // Consulta as máquinas
-$sql = "SELECT id, id_funcionario, id_maquina, categoria, data_abertura, data_fechamento, problema, fechamento FROM chamado";
+$sql =  "SELECT c.*, m.nome_maquina, m.setor, a.categoria
+        FROM chamado c
+        LEFT JOIN maquina m ON c.id_maquina = m.id
+        LEFT JOIN categoria_chamado a ON c.categoria = a.id
+        ORDER BY c.data_abertura";
+        
 $result = $conn->query($sql);
 ?>
 
@@ -66,7 +71,9 @@ $result = $conn->query($sql);
             <th>Data_abertura</th>
             <th>Data_fechamento</th>
             <th>Problema</th>
-            <th>Fechamento</th>
+            <th>Solução</th>
+            <th>Progresso</th>
+            <th>Ações</th>
         </tr>
     </thead>
     <tbody>
@@ -75,12 +82,13 @@ $result = $conn->query($sql);
             <tr>
                 <td><?= $row['id'] ?></td>
                 <td><?= htmlspecialchars($row['id_funcionario']) ?></td>
-                <td><?= htmlspecialchars($row['id_maquina']) ?></td>
+                <td><?= htmlspecialchars($row['nome_maquina']) ?></td>
                 <td><?= htmlspecialchars($row['categoria']) ?></td>
                 <td><?= htmlspecialchars($row['data_abertura']) ?></td>
                 <td><?= htmlspecialchars($row['data_fechamento']) ?></td>
                 <td><?= htmlspecialchars($row['problema']) ?></td>
-                <td><?= htmlspecialchars($row['fechamento']) ?></td>
+                <td><?= htmlspecialchars($row['solucao']) ?></td>
+                <td><?= htmlspecialchars($row['progresso']) ?></td>
                 <td>
                     <a class="button" href="editar_chamado.php?id=<?= $row['id'] ?>">Editar</a>
                     <a class="button delete" href="excluir_chamado.php?id=<?= $row['id'] ?>" onclick="return confirm('Tem certeza que deseja excluir este chamado?')">Excluir</a>
