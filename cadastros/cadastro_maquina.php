@@ -1,3 +1,26 @@
+<?php
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    include '../BD/conexao.php';
+
+    $nome = $_POST['nome'];
+    $setor = $_POST['setor'];
+
+    $sql = "INSERT INTO maquina (nome_maquina, setor) VALUES (?, ?)";
+
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("ss", $nome, $setor);
+
+    if ($stmt->execute()) {
+        echo "<script>alert('Máquina cadastrada com sucesso!'); window.location.href='../pagina_principal.php';</script>";
+    } else {
+        echo "Erro: " . $stmt->error;
+    }
+
+    $stmt->close();
+    $conn->close();
+}
+?>
+
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -75,7 +98,7 @@
 
     <h1>Cadastro de Máquina</h1>
 
-    <form class="form-container" action="../BD/cadastro_maquina.php" method="post">
+    <form class="form-container" action="" method="post">
         <label for="nome">Nome da Máquina:</label>
         <input type="text" id="nome" name="nome"required><br>
 

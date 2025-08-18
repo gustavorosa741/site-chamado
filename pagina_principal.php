@@ -226,7 +226,7 @@ $conn->close();
                 <select id="cadastros" onchange="navegarCadastro(this.value)">
                     <option value="">Selecione</option>
                     <option value="cadastros/cadastro_chamado.php">Cadastrar Chamado</option>
-                    <option value="cadastros/cadastro_maquina.html">Cadastrar Máquina</option>
+                    <option value="cadastros/cadastro_maquina.php">Cadastrar Máquina</option>
                     <option value="cadastros/cadastro_usuario.php">Cadastrar Usuário</option>
                 </select>
             </div>
