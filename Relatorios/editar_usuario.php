@@ -29,10 +29,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }} else {
     // Busca os dados para preencher o formulário
-    $stmt = $conn->prepare("SELECT usuario FROM usuario WHERE id = ?");
+    $stmt = $conn->prepare("SELECT nome, usuario FROM usuario WHERE id = ?");
     $stmt->bind_param("i", $id);
     $stmt->execute();
-    $stmt->bind_result($usuario);
+    $stmt->bind_result($nome, $usuario);
     $stmt->fetch();
     $stmt->close();
 }
@@ -131,7 +131,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <input type="text" id="confirmar_senha" name="confirmar_senha" required><br>
 
     <button type="submit">Salvar</button><br>
-    <button type="button" onclick="window.location.href='listar_usuario.php'">Cancelar</button><br>
+    <button type="button" onclick="window.location.href='listar_usuarios.php'">Cancelar</button><br>
 </form>
 
 </body>

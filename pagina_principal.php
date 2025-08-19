@@ -4,8 +4,8 @@ include 'BD/conexao.php';
 $chamados = [
     'Aberto' => [],
     'Em andamento' => [],
-    'Aguardando peças' => [],
-    'Concluído' => []
+    'Espera' => [],
+    'Concluido' => []
 ];
 
 $sql = "SELECT c.*, m.nome_maquina, m.setor, a.categoria
@@ -29,6 +29,7 @@ $conn->close();
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=0.7">
     <meta charset="UTF-8">
     <title>Chamados</title>
     <style>
@@ -428,7 +429,7 @@ $conn->close();
             }
         }
 
-        // Carrega os chamados via AJAX
+        /*// Carrega os chamados via AJAX
         function carregarChamados() {
             fetch('api/chamados.php')
                 .then(response => response.json())
@@ -468,7 +469,7 @@ $conn->close();
         }
 
         // Carrega os chamados quando a página é carregada
-        document.addEventListener('DOMContentLoaded', carregarChamados);
+        document.addEventListener('DOMContentLoaded', carregarChamados);*/
         </script>
 </body>
 </html>

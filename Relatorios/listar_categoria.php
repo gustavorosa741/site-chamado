@@ -8,6 +8,7 @@ $result = $conn->query($sql);
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=0.7">
     <meta charset="UTF-8">
     <title>Lista de Categorias</title>
     <style>
@@ -49,6 +50,18 @@ $result = $conn->query($sql);
         a.button.delete {
             background-color: #cc3333;
         }
+
+        a.button-voltar {
+            background-color: #3399ff;
+            color: white;
+            padding: 12px 30px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: bold;
+            margin-right: 5px;
+            margin-top: 20px;
+        }
+
     </style>
 </head>
 <body>
@@ -78,7 +91,7 @@ $result = $conn->query($sql);
         <?php else: ?>
             <tr><td colspan="4">Nenhuma Categoria cadastrada.</td></tr>
         <?php endif; ?>
-        <button type="button" onclick="window.location.href='../pagina_principal.php'">Voltar</button>
+        <a class="button-voltar" href="../pagina_principal.php">Voltar</a>
     </tbody>
 </table>
 

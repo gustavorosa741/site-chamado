@@ -1,13 +1,14 @@
 <?php
 include '../BD/conexao.php';
 
-$sql = "SELECT id, usuario, senha FROM usuario";
+$sql = "SELECT id, nome, usuario, senha FROM usuario";
 $result = $conn->query($sql);
 ?>
 
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=0.7">
     <meta charset="UTF-8">
     <title>Lista de Usuários</title>
     <style>
@@ -40,7 +41,7 @@ $result = $conn->query($sql);
         a.button {
             background-color: #3399ff;
             color: white;
-            padding: 6px 12px;
+            padding: 8px 20px;
             border-radius: 4px;
             text-decoration: none;
             font-weight: bold;
@@ -49,6 +50,18 @@ $result = $conn->query($sql);
         a.button.delete {
             background-color: #cc3333;
         }
+
+        a.button-voltar {
+            background-color: #3399ff;
+            color: white;
+            padding: 12px 30px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: bold;
+            margin-right: 5px;
+            margin-top: 20px;
+        }
+        
     </style>
 </head>
 <body>
@@ -59,8 +72,9 @@ $result = $conn->query($sql);
     <thead>
         <tr>
             <th>ID</th>
+            <th>Nome</th>
             <th>Usuario</th>
-            <th>Senha</th>
+            <th>Ações</th>
         </tr>
     </thead>
     <tbody>
@@ -68,6 +82,7 @@ $result = $conn->query($sql);
             <?php while($row = $result->fetch_assoc()): ?>
             <tr>
                 <td><?= $row['id'] ?></td>
+                <td><?= htmlspecialchars($row['nome']) ?></td>
                 <td><?= htmlspecialchars($row['usuario']) ?></td>
                 <td>
                     <a class="button" href="editar_usuario.php?id=<?= $row['id'] ?>">Editar</a>
@@ -78,7 +93,7 @@ $result = $conn->query($sql);
         <?php else: ?>
             <tr><td colspan="4">Nenhum usuário cadastrado.</td></tr>
         <?php endif; ?>
-        <button type="button" onclick="window.location.href='../pagina_principal.php'">Voltar</button>
+        <a class="button-voltar" href="../pagina_principal.php">Voltar</a>
     </tbody>
 </table>
 
