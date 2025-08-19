@@ -18,10 +18,11 @@ $chamados = [
     'Concluido' => []
 ];
 
-$sql = "SELECT c.*, m.nome_maquina, m.setor, a.categoria
+$sql = "SELECT c.*, m.nome_maquina, m.setor, a.categoria, u.nome
         FROM chamado c
         LEFT JOIN maquina m ON c.id_maquina = m.id
         LEFT JOIN categoria_chamado a ON c.categoria = a.id
+        LEFT JOIN usuario u ON c.id_funcionario = u.id
         ORDER BY c.data_abertura ";
 
 $result = $conn->query($sql);
@@ -94,7 +95,7 @@ $conn->close();
             display: flex;
             gap: 15px;
             overflow-x: auto;
-            padding-bottom: 20px;
+            padding-bottom: 20px;   
         }
 
         .status-column {
@@ -102,6 +103,7 @@ $conn->close();
             min-width: 300px;
             background-color: #f9f9f9;
             border-radius: 5px;
+            
         }
 
         .status-title {
@@ -145,6 +147,7 @@ $conn->close();
 
         .chamado-card.aberto {
             border-left-color: #FF6B6B;
+            
         }
 
         .chamado-card.andamento {
@@ -279,7 +282,7 @@ $conn->close();
                                 </div>
                                 <div class="chamado-info">
                                     <span class="chamado-label">Solicitante:</span>
-                                    <span><?= htmlspecialchars($chamado['id_funcionario']) ?></span>
+                                    <span><?= htmlspecialchars($chamado['nome']) ?></span>
                                 </div>
                                 <div class="chamado-info">
                                     <span class = "chamado-label">Problema:</span>
@@ -320,7 +323,7 @@ $conn->close();
                                 </div>
                                 <div class="chamado-info">
                                     <span class="chamado-label">Solicitante:</span>
-                                    <span><?= htmlspecialchars($chamado['id_funcionario']) ?></span>
+                                    <span><?= htmlspecialchars($chamado['nome']) ?></span>
                                 </div>
                                 <div class="chamado-info">
                                     <span class = "chamado-label">Problema:</span>
@@ -362,7 +365,7 @@ $conn->close();
                                 </div>
                                 <div class="chamado-info">
                                     <span class="chamado-label">Solicitante:</span>
-                                    <span><?= htmlspecialchars($chamado['id_funcionario']) ?></span>
+                                    <span><?= htmlspecialchars($chamado['nome']) ?></span>
                                 </div>
                                 <div class="chamado-info">
                                     <span class = "chamado-label">Problema:</span>
@@ -404,7 +407,7 @@ $conn->close();
                                 </div>
                                 <div class="chamado-info">
                                     <span class="chamado-label">Solicitante:</span>
-                                    <span><?= htmlspecialchars($chamado['id_funcionario']) ?></span>
+                                    <span><?= htmlspecialchars($chamado['nome']) ?></span>
                                 </div>
                                 <div class="chamado-info">
                                     <span class = "chamado-label">Problema:</span>

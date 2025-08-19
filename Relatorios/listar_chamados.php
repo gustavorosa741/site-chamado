@@ -24,7 +24,7 @@ $result = $conn->query($sql);
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=0.3">
+    <meta name="viewport" content="width=device-width, initial-scale=0.5">
     <meta charset="UTF-8">
     <title>Lista de Chamados</title>
     <style>
@@ -43,7 +43,7 @@ $result = $conn->query($sql);
             overflow: hidden;
         }
         th, td {
-            padding: 12px 15px;
+            padding: 10px 15px;
             border-bottom: 1px solid #ddd;
             text-align: left;
         }
@@ -54,7 +54,7 @@ $result = $conn->query($sql);
         tr:hover {
             background-color: #e6f0ff;
         }
-        a.button {
+        p.button {
             background-color: #3399ff;
             color: white;
             padding: 6px 12px;
@@ -63,7 +63,7 @@ $result = $conn->query($sql);
             font-weight: bold;
             margin-right: 5px;
         }
-        a.button.delete {
+        p.button.delete {
             background-color: #cc3333;
         }
 
@@ -113,8 +113,8 @@ $result = $conn->query($sql);
                 <td><?= htmlspecialchars($row['solucao']) ?></td>
                 <td><?= htmlspecialchars($row['progresso']) ?></td>
                 <td>
-                    <a class="button" href="editar_chamado.php?id=<?= $row['id'] ?>">Editar</a>
-                    <a class="button delete" href="excluir_chamado.php?id=<?= $row['id'] ?>" onclick="return confirm('Tem certeza que deseja excluir este chamado?')">Excluir</a>
+                    <p class="button" href="editar_chamado.php?id=<?= $row['id'] ?>">Editar</p>
+                    <p class="button delete" href="excluir_chamado.php?id=<?= $row['id'] ?>" onclick="return confirm('Tem certeza que deseja excluir este chamado?')">Excluir</p>
                 </td>
             </tr>
             <?php endwhile; ?>

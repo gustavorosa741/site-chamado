@@ -142,7 +142,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <script>
     function formatarEmTempoReal(campo) {
             // Remove todos os espaços (incluindo os do meio)
-            let valor = campo.value.replace(/\s/g, '');
+            let valor = campo.value.replace();
             // Converte para maiúsculas
             valor = valor.toUpperCase();
             // Atualiza o valor do campo
