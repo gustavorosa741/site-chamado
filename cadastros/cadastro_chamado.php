@@ -156,7 +156,6 @@ $conn->close();
             <?php endforeach; ?>
         </select>
                 
-
         <button type="submit">Cadastrar</button>
         <button type="button" onclick="window.location.href='../pagina_principal.php'">Voltar</button>
     </form>

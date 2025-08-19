@@ -99,11 +99,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     <form class="form-container" action="" method="post">
         <label for="categoria">Categoria:</label>
-        <input type="text" id="categoria" name="categoria"required><br>
+        <input type="text" id="categoria" name="categoria" required oninput="formatarEmTempoReal(this)"><br>
 
         <button type="submit">Cadastrar</button><br>
         <button type="button" onclick="window.location.href='../pagina_principal.php'">Voltar</button>
     </form>
 
 </body>
+<script>
+    function formatarEmTempoReal(campo) {
+            // Remove todos os espaços (incluindo os do meio)
+            let valor = campo.value.replace(/\s/g, '');
+            // Converte para maiúsculas
+            valor = valor.toUpperCase();
+            // Atualiza o valor do campo
+            campo.value = valor;
+            
+            // Move o cursor para o final (para não bugar a digitação)
+            campo.setSelectionRange(valor.length, valor.length);
+    }
+</script>
 </html>
