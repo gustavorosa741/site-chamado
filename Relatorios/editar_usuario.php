@@ -8,6 +8,7 @@ if (!isset($_GET['id'])) {
 $id = intval($_GET['id']);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $nome =$_POST['nome'] ?? '';
     $usuario = $_POST['usuario'] ?? '';
     $senha = $_POST['senha'] ?? '';
     $confirmar_senha = $_POST['confirmar_senha'] ?? '';
@@ -17,8 +18,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else{
         $senha_hash = password_hash($senha, PASSWORD_DEFAULT);
 
-        $stmt = $conn->prepare("UPDATE usuario SET usuario = ?, senha = ? WHERE id = ?");
-        $stmt->bind_param("ssi", $usuario, $senha_hash, $id);
+        $stmt = $conn->prepare("UPDATE usuario SET nome=?, usuario = ?, senha = ? WHERE id = ?");
+        $stmt->bind_param("sssi", $nome, $usuario, $senha_hash, $id);
 
         if ($stmt->execute()) {
             header("Location: listar_usuarios.php");
@@ -116,6 +117,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <h1>Editar Usuário</h1>
 
 <form class="form-container" action="" method="post">
+
+    <label for="nome">Nome:</label>
+    <input type="text" id="nome" name="nome" value="<?= htmlspecialchars($nome) ?>" required><br>
+
     <label for="usuario">Usuario:</label>
     <input type="text" id="usuario" name="usuario" value="<?= htmlspecialchars($usuario) ?>" required><br>
 
