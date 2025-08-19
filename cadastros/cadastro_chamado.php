@@ -1,8 +1,15 @@
 <?php
-// Conexão com o banco de dados
-include '../BD/conexao.php';
 
 session_start();
+
+// Verificar se está logado
+if (!isset($_SESSION['usuario_id'])) {
+    header("Location: ../login.php");
+    exit;
+}
+
+// Conexão com o banco de dados
+include '../BD/conexao.php';
 
 // Verificar se está logado
 if (!isset($_SESSION['usuario_id'])) {
