@@ -2,6 +2,14 @@
 // Conexão com o banco de dados
 include '../BD/conexao.php';
 
+session_start();
+
+// Verificar se está logado
+if (!isset($_SESSION['usuario_id'])) {
+    header("Location: login.php");
+    exit;
+}
+
 // Processa o formulário quando enviado
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $maquina_id = $_POST['maquina'];
@@ -9,10 +17,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $problema = $_POST['problema'];
     $categoria = $_POST['categoria'];
     $progresso = 'Aberto';
+    $id_funcionario = $_SESSION['usuario_id'];
 
-    $sql = "INSERT INTO chamado (id_maquina, data_abertura, problema, categoria, progresso) VALUES (?, ?, ?, ?, ?)";
+    $sql = "INSERT INTO chamado (id_funcionario, id_maquina, data_abertura, problema, categoria, progresso) VALUES (?, ?, ?, ?, ?, ?)";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("issss", $maquina_id, $data, $problema, $categoria, $progresso);
+    $stmt->bind_param("iissss",$id_funcionario, $maquina_id, $data, $problema, $categoria, $progresso);
 
     if ($stmt->execute()) {
         echo "<script>alert('Chamado cadastrado com sucesso!'); window.location.href='../cadastros/cadastro_chamado.php';</script>";

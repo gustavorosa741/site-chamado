@@ -2,10 +2,11 @@
 include '../BD/conexao.php';
 
 // Consulta as máquinas
-$sql =  "SELECT c.*, m.nome_maquina, m.setor, a.categoria
+$sql =  "SELECT c.*, m.nome_maquina, m.setor, a.categoria, u.nome
         FROM chamado c
         LEFT JOIN maquina m ON c.id_maquina = m.id
         LEFT JOIN categoria_chamado a ON c.categoria = a.id
+        LEFT JOIN usuario u ON c.id_funcionario = u.id
         ORDER BY c.data_abertura";
         
 $result = $conn->query($sql);
@@ -67,7 +68,7 @@ $result = $conn->query($sql);
             margin-right: 5px;
             margin-top: 20px;
         }
-        
+
     </style>
 </head>
 <body>
@@ -94,7 +95,7 @@ $result = $conn->query($sql);
             <?php while($row = $result->fetch_assoc()): ?>
             <tr>
                 <td><?= $row['id'] ?></td>
-                <td><?= htmlspecialchars($row['id_funcionario']) ?></td>
+                <td><?= htmlspecialchars($row['nome']) ?></td>
                 <td><?= htmlspecialchars($row['nome_maquina']) ?></td>
                 <td><?= htmlspecialchars($row['categoria']) ?></td>
                 <td><?= htmlspecialchars($row['data_abertura']) ?></td>
