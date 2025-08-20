@@ -1,7 +1,7 @@
 <?php
 // dashboard.php
 session_start();
-include 'BD/conexao.php';
+include '../BD/conexao.php';
 
 // Verificar autenticação
 if (!isset($_SESSION['usuario_id'])) {
