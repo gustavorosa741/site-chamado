@@ -235,7 +235,7 @@ $categoryDataJson = json_encode($categoryData);
 <body>
     <header>
         <h1><span class="icon">📊</span> Dashboard de Chamados</h1>
-        <div>Usuário: <strong id="user-name"><?php echo $_SESSION['usuario_nome'] ?? 'Usuário'; ?></strong></div>
+        <button type="button" onclick="window.location.href='../pagina_principal.php'">Voltar</button>
     </header>
     
     <div class="stats-grid">
