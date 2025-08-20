@@ -9,59 +9,136 @@ if (!isset($_SESSION['usuario_id'])) {
     exit;
 }
 
+// Definir período padrão (30 dias)
+$periodo = isset($_GET['periodo']) ? intval($_GET['periodo']) : 30;
+$setor = isset($_GET['setor']) ? $_GET['setor'] : '';
+
+// Validar período
+$periodos_permitidos = [7, 30, 90, 365];
+if (!in_array($periodo, $periodos_permitidos)) {
+    $periodo = 30;
+}
+
+// Preparar condições para consultas - CORREÇÃO AQUI
+$condicoes = "c.data_abertura >= DATE_SUB(NOW(), INTERVAL $periodo DAY)";
+$where_condicoes = "WHERE " . $condicoes;
+if (!empty($setor)) {
+    $setor_escape = $conn->real_escape_string($setor);
+    $where_condicoes .= " AND m.setor = '$setor_escape'";
+}
+
 // Buscar dados do dashboard
 $machineData = [];
 $categoryData = [];
 
-// Chamados por máquina
+// Chamados por máquina - CORREÇÃO: usar $where_condicoes
 $query = "
     SELECT m.nome_maquina, COUNT(c.id) as total 
     FROM chamado c 
     JOIN maquina m ON c.id_maquina = m.id 
-    WHERE c.data_abertura >= DATE_SUB(NOW(), INTERVAL 30 DAY)
-    GROUP BY m.id 
+    WHERE $condicoes" . (!empty($setor) ? " AND m.setor = '" . $conn->real_escape_string($setor) . "'" : "") . "
+    GROUP BY m.id, m.nome_maquina
     ORDER BY total DESC
 ";
-$stmt = $conn->prepare($query);
-$stmt->execute();
-$result = $stmt->get_result();
-while ($row = $result->fetch_assoc()) {
-    $machineData[] = $row;
-}
-$stmt->close();
 
-// Chamados por categoria
+$stmt = $conn->prepare($query);
+if ($stmt) {
+    $stmt->execute();
+    $result = $stmt->get_result();
+    while ($row = $result->fetch_assoc()) {
+        $machineData[] = $row;
+    }
+    $stmt->close();
+} else {
+    error_log("Erro na consulta de máquinas: " . $conn->error);
+}
+
+// Chamados por categoria - CORREÇÃO: usar $where_condicoes
 $query = "
     SELECT cat.categoria, COUNT(c.id) as total 
     FROM chamado c 
     JOIN categoria_chamado cat ON c.categoria = cat.id 
-    WHERE c.data_abertura >= DATE_SUB(NOW(), INTERVAL 30 DAY)
-    GROUP BY cat.id 
+    WHERE $condicoes" . (!empty($setor) ? " AND m.setor = '" . $conn->real_escape_string($setor) . "'" : "") . "
+    GROUP BY cat.id, cat.categoria
     ORDER BY total DESC
 ";
-$stmt = $conn->prepare($query);
-$stmt->execute();
-$result = $stmt->get_result();
-while ($row = $result->fetch_assoc()) {
-    $categoryData[] = $row;
-}
-$stmt->close();
 
-// Buscar estatísticas totais
+$stmt = $conn->prepare($query);
+if ($stmt) {
+    $stmt->execute();
+    $result = $stmt->get_result();
+    while ($row = $result->fetch_assoc()) {
+        $categoryData[] = $row;
+    }
+    $stmt->close();
+} else {
+    error_log("Erro na consulta de categorias: " . $conn->error);
+}
+
+// Dados para gráfico de timeline (evolução temporal)
+$timelineData = [];
+$query = "
+    SELECT 
+        DATE(c.data_abertura) as data, 
+        COUNT(*) as total_abertos,
+        SUM(CASE WHEN c.data_fechamento IS NOT NULL THEN 1 ELSE 0 END) as total_fechados
+    FROM chamado c
+    WHERE $condicoes" . (!empty($setor) ? " AND m.setor = '" . $conn->real_escape_string($setor) . "'" : "") . "
+    GROUP BY DATE(c.data_abertura)
+    ORDER BY data
+";
+
+$result = $conn->query($query);
+if ($result) {
+    while ($row = $result->fetch_assoc()) {
+        $timelineData[] = $row;
+    }
+} else {
+    error_log("Erro na consulta de timeline: " . $conn->error);
+}
+
+// Dados para gráfico de tempo de resolução
+$resolutionData = [];
+$query = "
+    SELECT 
+        m.nome_maquina,
+        AVG(TIMESTAMPDIFF(DAY, c.data_abertura, c.data_fechamento)) as tempo_medio_dias
+    FROM chamado c
+    JOIN maquina m ON c.id_maquina = m.id
+    WHERE c.data_fechamento IS NOT NULL
+    AND c.data_abertura >= DATE_SUB(NOW(), INTERVAL $periodo DAY)
+    " . (!empty($setor) ? " AND m.setor = '" . $conn->real_escape_string($setor) . "'" : "") . "
+    GROUP BY m.id, m.nome_maquina
+    ORDER BY tempo_medio_dias DESC
+    LIMIT 5
+";
+
+$result = $conn->query($query);
+if ($result) {
+    while ($row = $result->fetch_assoc()) {
+        $resolutionData[] = $row;
+    }
+} else {
+    error_log("Erro na consulta de resolução: " . $conn->error);
+}
+
+// Buscar estatísticas totais - CORREÇÃO DAS CONSULTAS
 $totalChamados = 0;
 $chamadosAbertos = 0;
 $maquinaMaisChamados = '';
 $categoriaPrincipal = '';
 
-$query = "SELECT COUNT(*) as total FROM chamado WHERE data_abertura >= DATE_SUB(NOW(), INTERVAL 30 DAY)";
+// Consulta total de chamados - CORREÇÃO
+$query = "SELECT COUNT(*) as total FROM chamado c JOIN maquina m ON c.id_maquina = m.id WHERE $condicoes" . (!empty($setor) ? " AND m.setor = '" . $conn->real_escape_string($setor) . "'" : "");
 $result = $conn->query($query);
-if ($row = $result->fetch_assoc()) {
+if ($result && $row = $result->fetch_assoc()) {
     $totalChamados = $row['total'];
 }
 
-$query = "SELECT COUNT(*) as abertos FROM chamado WHERE data_fechamento IS NULL";
+// Consulta chamados abertos - CORREÇÃO
+$query = "SELECT COUNT(*) as abertos FROM chamado c JOIN maquina m ON c.id_maquina = m.id WHERE c.data_fechamento IS NULL AND $condicoes" . (!empty($setor) ? " AND m.setor = '" . $conn->real_escape_string($setor) . "'" : "");
 $result = $conn->query($query);
-if ($row = $result->fetch_assoc()) {
+if ($result && $row = $result->fetch_assoc()) {
     $chamadosAbertos = $row['abertos'];
 }
 
@@ -73,10 +150,50 @@ if (!empty($categoryData)) {
     $categoriaPrincipal = $categoryData[0]['categoria'];
 }
 
+// Buscar setores disponíveis para o filtro
+$setores = [];
+$query = "SELECT DISTINCT setor FROM maquina WHERE setor IS NOT NULL AND setor != '' ORDER BY setor";
+$result = $conn->query($query);
+if ($result) {
+    while ($row = $result->fetch_assoc()) {
+        $setores[] = $row['setor'];
+    }
+}
+
+// Processar exportação de relatório
+if (isset($_GET['export'])) {
+    header('Content-Type: text/csv; charset=utf-8');
+    header('Content-Disposition: attachment; filename=relatorio_chamados.csv');
+    
+    $output = fopen('php://output', 'w');
+    
+    // Cabeçalho do CSV
+    fputcsv($output, ['Relatório de Chamados - Período: ' . $periodo . ' dias'], ';');
+    fputcsv($output, []); // Linha vazia
+    fputcsv($output, ['Máquina', 'Total de Chamados'], ';');
+    
+    foreach ($machineData as $maquina) {
+        fputcsv($output, [$maquina['nome_maquina'], $maquina['total']], ';');
+    }
+    
+    fputcsv($output, []); // Linha vazia
+    fputcsv($output, ['Categoria', 'Total de Chamados'], ';');
+    
+    foreach ($categoryData as $categoria) {
+        fputcsv($output, [$categoria['categoria'], $categoria['total']], ';');
+    }
+    
+    fclose($output);
+    exit;
+}
+
 // Converter dados para JSON para uso no JavaScript
 $machineDataJson = json_encode($machineData);
 $categoryDataJson = json_encode($categoryData);
+$timelineDataJson = json_encode($timelineData);
+$resolutionDataJson = json_encode($resolutionData);
 ?>
+
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -87,7 +204,7 @@ $categoryDataJson = json_encode($categoryData);
     <style>
         :root {
             --primary-color: #2c3e50;
-            --secondary-color: #3498db;
+            --secondary-color: #3498db;     
             --accent-color: #e74c3c;
             --light-color: #ecf0f1;
             --text-color: #333;
@@ -242,7 +359,7 @@ $categoryDataJson = json_encode($categoryData);
         <div class="stat-card">
             <div class="stat-label">Total de Chamados</div>
             <div class="stat-value"><?php echo $totalChamados; ?></div>
-            <div class="stat-label">30 dias</div>
+            <div class="stat-label"><?php echo $periodo; ?> dias</div>
         </div>
         <div class="stat-card">
             <div class="stat-label">Chamados Abertos</div>
@@ -265,7 +382,7 @@ $categoryDataJson = json_encode($categoryData);
             <div class="stat-value"><?php echo htmlspecialchars($categoriaPrincipal); ?></div>
             <div class="stat-label">
                 <?php 
-                if (!empty($categoryData)) {
+                if (!empty($categoryData) && $totalChamados > 0) {
                     $percent = round(($categoryData[0]['total'] / $totalChamados) * 100);
                     echo $percent . '% dos chamados';
                 }
@@ -274,24 +391,28 @@ $categoryDataJson = json_encode($categoryData);
         </div>
     </div>
     
-    <div class="controls">
-        <select id="time-range">
-            <option value="7">Últimos 7 dias</option>
-            <option value="30" selected>Últimos 30 dias</option>
-            <option value="90">Últimos 3 meses</option>
-            <option value="365">Último ano</option>
-        </select>
-        
-        <select id="setor-filter">
-            <option value="">Todos os setores</option>
-            <option value="producao">Produção</option>
-            <option value="embalagem">Embalagem</option>
-            <option value="manutencao">Manutenção</option>
-        </select>
-        
-        <button id="btn-apply">Aplicar Filtros</button>
-        <button id="btn-export">Exportar Relatório</button>
-    </div>
+    <form method="GET" action="">
+        <div class="controls">
+            <select id="time-range" name="periodo">
+                <option value="7" <?php echo $periodo == 7 ? 'selected' : ''; ?>>Últimos 7 dias</option>
+                <option value="30" <?php echo $periodo == 30 ? 'selected' : ''; ?>>Últimos 30 dias</option>
+                <option value="90" <?php echo $periodo == 90 ? 'selected' : ''; ?>>Últimos 3 meses</option>
+                <option value="365" <?php echo $periodo == 365 ? 'selected' : ''; ?>>Último ano</option>
+            </select>
+            
+            <select id="setor-filter" name="setor">
+                <option value="">Todos os setores</option>
+                <?php foreach ($setores as $s): ?>
+                <option value="<?php echo htmlspecialchars($s); ?>" <?php echo $setor == $s ? 'selected' : ''; ?>>
+                    <?php echo htmlspecialchars($s); ?>
+                </option>
+                <?php endforeach; ?>
+            </select>
+            
+            <button type="submit" id="btn-apply">Aplicar Filtros</button>
+            <button type="button" id="btn-export" onclick="exportRelatorio()">Exportar Relatório</button>
+        </div>
+    </form>
     
     <div class="dashboard">
         <div class="card">
@@ -335,6 +456,8 @@ $categoryDataJson = json_encode($categoryData);
         // Dados do PHP convertidos para JavaScript
         const machineDataFromPHP = <?php echo $machineDataJson; ?>;
         const categoryDataFromPHP = <?php echo $categoryDataJson; ?>;
+        const timelineDataFromPHP = <?php echo $timelineDataJson; ?>;
+        const resolutionDataFromPHP = <?php echo $resolutionDataJson; ?>;
 
         // Preparar dados para os gráficos
         const machineData = {
@@ -391,19 +514,24 @@ $categoryDataJson = json_encode($categoryData);
             }]
         };
 
-        // Dados simulados (seriam buscados do banco em uma versão completa)
+        // Preparar dados de timeline
+        const timelineLabels = timelineDataFromPHP.map(item => {
+            const date = new Date(item.data);
+            return date.toLocaleDateString('pt-BR');
+        });
+
         const timelineData = {
-            labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
+            labels: timelineLabels,
             datasets: [{
                 label: 'Chamados Abertos',
-                data: [12, 19, 15, 17, 14, 16, 18, 17, 20, 18, 22, 24],
+                data: timelineDataFromPHP.map(item => item.total_abertos),
                 borderColor: 'rgba(231, 76, 60, 1)',
                 backgroundColor: 'rgba(231, 76, 60, 0.1)',
                 tension: 0.4,
                 fill: true
             }, {
                 label: 'Chamados Resolvidos',
-                data: [10, 16, 13, 15, 14, 15, 16, 17, 18, 19, 20, 22],
+                data: timelineDataFromPHP.map(item => item.total_fechados),
                 borderColor: 'rgba(46, 204, 113, 1)',
                 backgroundColor: 'rgba(46, 204, 113, 0.1)',
                 tension: 0.4,
@@ -411,11 +539,12 @@ $categoryDataJson = json_encode($categoryData);
             }]
         };
 
+        // Preparar dados de tempo de resolução
         const resolutionData = {
-            labels: machineDataFromPHP.map(item => item.nome_maquina).slice(0, 5),
+            labels: resolutionDataFromPHP.map(item => item.nome_maquina),
             datasets: [{
                 label: 'Tempo Médio (dias)',
-                data: [4.5, 3.2, 5.7, 2.8, 6.2],
+                data: resolutionDataFromPHP.map(item => parseFloat(item.tempo_medio_dias).toFixed(1)),
                 backgroundColor: 'rgba(52, 152, 219, 0.7)',
                 borderColor: 'rgba(52, 152, 219, 1)',
                 borderWidth: 1
@@ -443,7 +572,7 @@ $categoryDataJson = json_encode($categoryData);
                         },
                         title: {
                             display: true,
-                            text: 'Chamados por Máquina (Últimos 30 dias)'
+                            text: 'Chamados por Máquina (Últimos <?php echo $periodo; ?> dias)'
                         }
                     }
                 }
@@ -473,7 +602,7 @@ $categoryDataJson = json_encode($categoryData);
                     plugins: {
                         title: {
                             display: true,
-                            text: 'Evolução Mensal de Chamados'
+                            text: 'Evolução de Chamados'
                         }
                     },
                     scales: {
@@ -512,14 +641,18 @@ $categoryDataJson = json_encode($categoryData);
             });
         };
 
-        // Simular filtros
-        document.getElementById('btn-apply').addEventListener('click', function() {
-            alert('Filtros aplicados! (Esta funcionalidade conectaria ao backend em uma implementação real)');
-        });
-
-        document.getElementById('btn-export').addEventListener('click', function() {
-            alert('Relatório exportado! (Esta funcionalidade geraria um PDF/Excel em uma implementação real)');
-        });
+        // Função para exportar relatório
+        function exportRelatorio() {
+            const periodo = document.getElementById('time-range').value;
+            const setor = document.getElementById('setor-filter').value;
+            
+            let url = '?export=1&periodo=' + periodo;
+            if (setor) {
+                url += '&setor=' + encodeURIComponent(setor);
+            }
+            
+            window.location.href = url;
+        }
     </script>
 </body>
 </html>
