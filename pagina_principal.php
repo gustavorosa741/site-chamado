@@ -228,12 +228,31 @@ $conn->close();
                 min-width: 100%;
             }
         }
+
+        .button-voltar {
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: white;
+            font-size: 14px;
+        }
+
+        .button-voltar {
+            background-color: #2980b9;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            float: right;
+        }
+        
     </style>
 </head>
 <body>
     <div class="container">
+        <button class="button-voltar" onclick="window.location.href='../logout.php'">Sair</button>
         <h1>🛠️Chamados Manutenção🛠️</h1>
-
+        
         <div class="menu-container">
             <div class="menu-item">
                 <label for="cadastros">Cadastros:</label>
