@@ -115,7 +115,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </style>
 </head>
 <body>
-
+    <img src="imagens/logo.jpg" alt="Logo" style="height: 100px;">
     <h1>Login</h1>
 
     <form class="form-container" action="" method="post">
