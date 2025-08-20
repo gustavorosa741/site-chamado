@@ -254,6 +254,7 @@ $conn->close();
                     <option value="Relatorios/listar_maquinas.php">Máquinas</option>
                     <option value="Relatorios/listar_usuarios.php">Usuários</option>
                     <option value="Relatorios/listar_categoria.php">Categoria</option>
+                    <option value="Relatorios/dashboard.php">Dashboard</option>
                 </select>
             </div>
         </div>
