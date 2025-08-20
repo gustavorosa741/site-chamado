@@ -245,11 +245,16 @@ $conn->close();
             transition: background-color 0.3s;
             float: right;
         }
+
+        .logo{
+            float:left;
+        }
         
     </style>
 </head>
 <body>
     <div class="container">
+        <img class="logo" src="imagens/logo.jpg" alt="Logo" style="height: 60px;">
         <button class="button-voltar" onclick="window.location.href='../logout.php'">Sair</button>
         <h1>🛠️Chamados Manutenção🛠️</h1>
         
