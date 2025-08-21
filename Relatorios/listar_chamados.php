@@ -52,7 +52,7 @@ $result = $conn->query($sql);
         tr:hover {
             background-color: #e6f0ff;
         }
-        p.button {
+        a.button {
             background-color: #3399ff;
             color: white;
             padding: 6px 12px;
@@ -61,7 +61,7 @@ $result = $conn->query($sql);
             font-weight: bold;
             margin-right: 5px;
         }
-        p.button.delete {
+        a.button.delete {
             background-color: #cc3333;
         }
 
@@ -111,8 +111,8 @@ $result = $conn->query($sql);
                 <td><?= htmlspecialchars($row['solucao']) ?></td>
                 <td><?= htmlspecialchars($row['progresso']) ?></td>
                 <td>
-                    <p class="button" href="editar_chamado.php?id=<?= $row['id'] ?>">Editar</p>
-                    <p class="button delete" href="excluir_chamado.php?id=<?= $row['id'] ?>" onclick="return confirm('Tem certeza que deseja excluir este chamado?')">Excluir</p>
+                    <p><a class="button" href="editar_chamado.php?id=<?= $row['id'] ?>">Editar</a></p>
+                    <a class="button delete" href="excluir_chamado.php?id=<?= $row['id'] ?>" onclick="return confirm('Tem certeza que deseja excluir este chamado?')">Excluir</a>
                 </td>
             </tr>
             <?php endwhile; ?>
