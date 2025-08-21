@@ -10,11 +10,25 @@ if (!isset($_SESSION['usuario_id'])) {
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     include '../BD/conexao.php';
 
-    $nome = $_POST['nome'];
-    $setor = $_POST['setor'];
+    $nome = trim($_POST['nome']);
+    $setor = trim($_POST['setor']);
+
+    $sql_check = "SELECT id FROM maquina WHERE nome_maquina = ? AND setor = ?";
+    $stmt_check = $conn->prepare($sql_check);
+    $stmt_check->bind_param("ss", $nome, $setor);
+    $stmt_check->execute();
+    $stmt_check->store_result();
+    
+    if ($stmt_check->num_rows > 0) {
+        echo "<script>alert('Erro: Esta máquina já está cadastrada neste setor!'); window.location.href='../pagina_principal.php';</script>";
+        $stmt_check->close();
+        $conn->close();
+        exit;
+    }
+    
+    $stmt_check->close();
 
     $sql = "INSERT INTO maquina (nome_maquina, setor) VALUES (?, ?)";
-
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("ss", $nome, $setor);
 
