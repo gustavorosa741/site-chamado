@@ -1,5 +1,5 @@
 <?php
-// dashboard.php
+
 session_start();
 include '../BD/conexao.php';
 

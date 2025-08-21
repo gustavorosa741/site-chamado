@@ -2,22 +2,18 @@
 
 session_start();
 
-// Verificar se está logado
 if (!isset($_SESSION['usuario_id'])) {
     header("Location: ../login.php");
     exit;
 }
 
-// Conexão com o banco de dados
 include '../BD/conexao.php';
 
-// Verificar se está logado
 if (!isset($_SESSION['usuario_id'])) {
     header("Location: login.php");
     exit;
 }
 
-// Processa o formulário quando enviado
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $maquina_id = $_POST['maquina'];
     $data = $_POST['data'];
@@ -39,7 +35,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->close();
 }
 
-// Busca todas as máquinas para o dropdown
 $maquinas = [];
 $sql_maquinas = "SELECT id, nome_maquina FROM maquina";
 $result = $conn->query($sql_maquinas);
@@ -49,7 +44,6 @@ if ($result && $result->num_rows > 0) {
     }
 }
 
-// Busca todas as categorias para o dropdown
 $categoria_chamado = [];
 $sql_categoria = "SELECT id, categoria FROM categoria_chamado";
 $result = $conn->query($sql_categoria);
@@ -58,7 +52,6 @@ $result = $conn->query($sql_categoria);
             $categoria_chamado[] = $row;
         }
     }
-
 
 $conn->close();
 ?>

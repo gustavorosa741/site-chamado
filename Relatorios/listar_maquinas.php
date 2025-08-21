@@ -2,7 +2,6 @@
 
 session_start();
 
-// Verificar se está logado
 if (!isset($_SESSION['usuario_id'])) {
     header("Location: ../login.php");
     exit;
@@ -10,7 +9,6 @@ if (!isset($_SESSION['usuario_id'])) {
 
 include '../BD/conexao.php';
 
-// Consulta as máquinas
 $sql = "SELECT id, nome_maquina, setor FROM maquina";
 $result = $conn->query($sql);
 ?>

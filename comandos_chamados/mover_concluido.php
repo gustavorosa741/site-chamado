@@ -1,11 +1,9 @@
 <?php
 include '../BD/conexao.php';
 
-// Se ainda não foi submetido o formulário, mostra o formulário de solução
 if (!isset($_POST['solucao'])) {
     $id = intval($_GET['id'] ?? 0);
     
-    // Verifica se o chamado existe
     $stmt = $conn->prepare("SELECT id FROM chamado WHERE id = ?");
     $stmt->bind_param("i", $id);
     $stmt->execute();
@@ -86,7 +84,6 @@ if (!isset($_POST['solucao'])) {
     exit;
 }
 
-// Processa o formulário quando submetido
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $id = intval($_POST['id']);
     $solucao = trim($_POST['solucao']);

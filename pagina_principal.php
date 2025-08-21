@@ -1,8 +1,6 @@
 <?php
-
 session_start();
 
-// Verificar se está logado
 if (!isset($_SESSION['usuario_id'])) {
     header("Location: login.php");
     exit;
@@ -283,10 +281,8 @@ $conn->close();
             </div>
         </div>
 
-        <!-- Colunas lado a lado -->
         <div class="status-columns">
 
-            <!-- Coluna de Chamados Abertos -->
             <div class="status-column">
                 <div class="status-title aberto-title">Abertos</div>
                 <div class="chamados-container" id="abertos-container">
@@ -327,7 +323,6 @@ $conn->close();
                 </div>
             </div>
 
-            <!-- Coluna de Chamados em Andamento -->
             <div class="status-column">
                 <div class="status-title andamento-title">Em Andamento</div>
                 <div class="chamados-container" id="andamento-container">
@@ -369,7 +364,6 @@ $conn->close();
                 </div>
             </div>
 
-            <!-- Coluna de Chamados em Espera -->
             <div class="status-column">
                 <div class="status-title espera-title">Aguardando Peças</div>
                 <div class="chamados-container" id="espera-container">
@@ -411,7 +405,6 @@ $conn->close();
                 </div>
             </div>
 
-            <!-- Coluna de Chamados Concluídos -->
             <div class="status-column">
                 <div class="status-title concluido-title">Concluídos</div>
                 <div class="chamados-container" id="concluido-container">
@@ -467,47 +460,6 @@ $conn->close();
             }
         }
 
-        /*// Carrega os chamados via AJAX
-        function carregarChamados() {
-            fetch('api/chamados.php')
-                .then(response => response.json())
-                .then(data => {
-                    // Limpa os containers
-                    document.querySelectorAll('.chamados-container').forEach(container => {
-                        container.innerHTML = '';
-                    });
-                    
-                    // Preenche com os dados recebidos
-                    preencherChamados(data);
-                })
-                .catch(error => console.error('Erro:', error));
-        }
-
-        // Função para preencher os chamados nos containers
-        function preencherChamados(data) {
-            data.forEach(chamado => {
-                const containerId = `${chamado.progresso.toLowerCase().replace(' ', '-')}-container`;
-                const container = document.getElementById(containerId);
-                
-                if (container) {
-                    const card = criarCardChamado(chamado);
-                    container.appendChild(card);
-                }
-            });
-        }
-
-        // Função para criar o HTML de um card de chamado
-        function criarCardChamado(chamado) {
-            const card = document.createElement('div');
-            card.className = `chamado-card ${chamado.progresso.toLowerCase().replace(' ', '-')}`;
-            
-            // ... (código para criar a estrutura do card similar ao PHP)
-            
-            return card;
-        }
-
-        // Carrega os chamados quando a página é carregada
-        document.addEventListener('DOMContentLoaded', carregarChamados);*/
         </script>
 </body>
 </html>

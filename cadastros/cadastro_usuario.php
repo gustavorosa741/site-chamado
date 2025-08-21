@@ -2,7 +2,6 @@
 
 session_start();
 
-// Verificar se está logado
 if (!isset($_SESSION['usuario_id'])) {
     header("Location: ../login.php");
     exit;
@@ -21,7 +20,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     } else {
 
-    // Criptografa a senha
     $senha_hash = password_hash($senha, PASSWORD_DEFAULT);
 
     $sql = "INSERT INTO usuario (nome, usuario, senha) VALUES (?, ?, ?)";
@@ -141,14 +139,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </body>
 <script>
     function formatarEmTempoReal(campo) {
-            // Remove todos os espaços (incluindo os do meio)
             let valor = campo.value.replace();
-            // Converte para maiúsculas
             valor = valor.toUpperCase();
-            // Atualiza o valor do campo
             campo.value = valor;
-            
-            // Move o cursor para o final (para não bugar a digitação)
             campo.setSelectionRange(valor.length, valor.length);
     }
 </script>

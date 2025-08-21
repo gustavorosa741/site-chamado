@@ -2,7 +2,6 @@
 
 session_start();
 
-// Verificar se está logado
 if (!isset($_SESSION['usuario_id'])) {
     header("Location: ../login.php");
     exit;
@@ -37,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             echo "Erro ao atualizar: " . $conn->error;
         }
     }} else {
-    // Busca os dados para preencher o formulário
+        
     $stmt = $conn->prepare("SELECT nome, usuario FROM usuario WHERE id = ?");
     $stmt->bind_param("i", $id);
     $stmt->execute();
@@ -81,7 +80,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             display: flex;
             flex-direction:column;
             text-align: left;
-            
         }
 
         label {
