@@ -58,6 +58,7 @@ $query = "
     SELECT cat.categoria, COUNT(c.id) as total 
     FROM chamado c 
     JOIN categoria_chamado cat ON c.categoria = cat.id 
+    JOIN maquina m ON c.id_maquina = m.id 
     WHERE $condicoes" . (!empty($setor) ? " AND m.setor = '" . $conn->real_escape_string($setor) . "'" : "") . "
     GROUP BY cat.id, cat.categoria
     ORDER BY total DESC
@@ -83,6 +84,7 @@ $query = "
         COUNT(*) as total_abertos,
         SUM(CASE WHEN c.data_fechamento IS NOT NULL THEN 1 ELSE 0 END) as total_fechados
     FROM chamado c
+    JOIN maquina m ON c.id_maquina = m.id
     WHERE $condicoes" . (!empty($setor) ? " AND m.setor = '" . $conn->real_escape_string($setor) . "'" : "") . "
     GROUP BY DATE(c.data_abertura)
     ORDER BY data
