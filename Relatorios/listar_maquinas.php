@@ -38,6 +38,9 @@ $result = $conn->query($sql);
             padding: 12px 15px;
             border-bottom: 1px solid #ddd;
             text-align: left;
+            max-width: 170px;
+            word-wrap: break-word;
+            white-space: normal;
         }
         th {
             background-color: #3399ff;

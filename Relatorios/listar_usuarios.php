@@ -16,7 +16,7 @@ $result = $conn->query($sql);
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=0.7">
+    <meta name="viewport" content="width=device-width, initial-scale=0.5">
     <meta charset="UTF-8">
     <title>Lista de Usuários</title>
     <style>
@@ -38,6 +38,9 @@ $result = $conn->query($sql);
             padding: 12px 15px;
             border-bottom: 1px solid #ddd;
             text-align: left;
+            max-width: 170px;
+            word-wrap: break-word;
+            white-space: normal;
         }
         th {
             background-color: #3399ff;
@@ -94,7 +97,7 @@ $result = $conn->query($sql);
 
                 } else if ($row['nivel_acesso'] == '2') {
                     $row['nivel_acesso'] = 'Manutenção';
-                    
+
                 } else {
                     $row['nivel_acesso'] = 'Usuário';
                 }
@@ -104,7 +107,6 @@ $result = $conn->query($sql);
                 <td><?= htmlspecialchars($row['nome']) ?></td>
                 <td><?= htmlspecialchars($row['usuario']) ?></td>
                 <td><?= $row['nivel_acesso'] ?></td>
-
                 <td>
                     <a class="button" href="editar_usuario.php?id=<?= $row['id'] ?>">Editar</a>
                     <a class="button delete" href="excluir_usuario.php?id=<?= $row['id'] ?>" onclick="return confirm('Tem certeza que deseja excluir este usuário?')">Excluir</a>
