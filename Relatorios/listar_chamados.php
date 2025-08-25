@@ -86,11 +86,11 @@ $result = $conn->query($sql);
     <thead>
         <tr>
             <th>ID</th>
-            <th>ID_funcionario</th>
-            <th>ID_maquina</th>
+            <th>Solicitante</th>
+            <th>Maquina</th>
             <th>Categoria</th>
-            <th>Data_abertura</th>
-            <th>Data_fechamento</th>
+            <th>Data Abertura</th>
+            <th>Data Fechamento</th>
             <th>Problema</th>
             <th>Solução</th>
             <th>Progresso</th>

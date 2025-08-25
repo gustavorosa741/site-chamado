@@ -42,6 +42,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->fetch();
     $stmt->close();
 }
+
+$maquinas = [];
+$sql_maquinas = "SELECT id, nome_maquina FROM maquina";
+$result = $conn->query($sql_maquinas);
+if ($result && $result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $maquinas[] = $row;
+    }
+}
+
+$categoria_chamado = [];
+$sql_categoria = "SELECT id, categoria FROM categoria_chamado";
+$result = $conn->query($sql_categoria);
+    if ($result && $result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            $categoria_chamado[] = $row;
+        }
+    }
+
 ?>
 
 <!DOCTYPE html>
@@ -126,11 +145,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <h1>Editar Chamado</h1>
 
 <form class="form-container" action="" method="post">
-    <label for="id_maquina">ID Máquina:</label>
-    <input type="text" id="id_maquina" name="id_maquina" value="<?= htmlspecialchars($id_maquina) ?>" required><br>
+    <input type="hidden" name="id_maquina" value="<?= $id ?>">
+    
+    <label for="maquina">Nome da Máquina:</label>
+    <select id="maquina" name="id_maquina" required>
+        <option value="">-- Selecione uma máquina --</option>
+        <?php foreach ($maquinas as $maquina): ?>
+            <option value="<?= htmlspecialchars($maquina['id']) ?>" 
+                <?= ($maquina['id'] == $id_maquina) ? 'selected' : '' ?>>
+                <?= htmlspecialchars($maquina['nome_maquina']) ?>
+            </option>
+        <?php endforeach; ?>
+    </select>
 
     <label for="categoria">Categoria:</label>
-    <input type="text" id="categoria" name="categoria" value="<?= htmlspecialchars($categoria) ?>" required><br>
+    <select id="categoria" name="categoria" required>
+        <option value="">-- Selecione uma categoria --</option>
+        <?php foreach ($categoria_chamado as $cat): ?>
+            <option value="<?= htmlspecialchars($cat['id']) ?>" 
+                <?= ($cat['id'] == $categoria) ? 'selected' : '' ?>>
+                <?= htmlspecialchars($cat['categoria']) ?>
+            </option>
+        <?php endforeach; ?>
+    </select>
 
     <label for="data_abertura">Data_abertura:</label>
     <input type="date" id="data_abertura" name="data_abertura" value="<?= htmlspecialchars($data_abertura) ?>" required><br>
