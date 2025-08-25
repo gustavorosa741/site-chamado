@@ -88,12 +88,20 @@ $result = $conn->query($sql);
     </thead>
     <tbody>
         <?php if ($result->num_rows > 0): ?>
-            <?php while($row = $result->fetch_assoc()): ?>
+            <?php while($row = $result->fetch_assoc()):
+                if ($row['nivel_acesso'] == '1') {
+                    $row['nivel_acesso'] = 'Administrador';
+                } else if ($row['nivel_acesso'] == '2') {
+                    $row['nivel_acesso'] = 'Manutenção';
+                } else {
+                    $row['nivel_acesso'] = 'Usuário';
+                }
+            ?>
             <tr>
                 <td><?= $row['id'] ?></td>
                 <td><?= htmlspecialchars($row['nome']) ?></td>
                 <td><?= htmlspecialchars($row['usuario']) ?></td>
-                <td><?= htmlspecialchars($row['nivel_acesso']) ?></td>
+                <td><?= $row['nivel_acesso'] ?></td>
 
                 <td>
                     <a class="button" href="editar_usuario.php?id=<?= $row['id'] ?>">Editar</a>
