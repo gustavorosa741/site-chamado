@@ -101,6 +101,8 @@ $conn->close();
             min-width: 300px;
             background-color: #f9f9f9;
             border-radius: 5px;
+            height: 800px; /* ou a altura desejada */
+            overflow-y: auto; /* scroll vertical quando necessário */
             
         }
 
@@ -111,6 +113,10 @@ $conn->close();
             color: white;
             border-radius: 5px 5px 0 0;
             text-align: center;
+            position: sticky;
+            top: 0;
+            background: white;
+            z-index: 10;
         }
 
         .aberto-title {
