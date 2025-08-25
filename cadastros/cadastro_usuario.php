@@ -14,27 +14,45 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $usuario = $_POST['usuario'];
     $senha = $_POST['senha'];
     $confirmar_senha = $_POST['confirmar_senha'];
+    $permissao = $_POST['nivel_acesso'];
 
+    $consulta = "SELECT usuario FROM usuario WHERE usuario = ?";
+    $stmt = $conn->prepare($consulta);
+    $stmt->bind_param("s", $usuario);
+    $stmt->execute();
+    $stmt->store_result();
+    
     if ($senha != $confirmar_senha) {
         echo "<script>alert('As senhas não coincidem!'); window.location.href='cadastro_usuario.php'</script>";
+        exit;
+
+    } else if (strlen($senha) < 8) {
+        echo "<script>alert('A senha deve ter no mínimo 8 caracteres!'); window.location.href='cadastro_usuario.php'</script>";
+        exit;
+
+    } else if (strlen($nome) < 3) {
+        echo "<script>alert('O nome deve ter no mínimo 3 caracteres!'); window.location.href='cadastro_usuario.php'</script>";
+        exit;
+
+    } else if ($stmt->num_rows > 0) {
+        echo "<script>alert('O usuário já existe!'); window.location.href='cadastro_usuario.php'</script>"; 
+        exit;
 
     } else {
+        $senha_hash = password_hash($senha, PASSWORD_DEFAULT);
 
-    $senha_hash = password_hash($senha, PASSWORD_DEFAULT);
+        $sql = "INSERT INTO usuario (nome, usuario, senha, nivel_acesso) VALUES (?, ?, ?, ?)";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("ssss", $nome, $usuario, $senha_hash, $permissao);
 
-    $sql = "INSERT INTO usuario (nome, usuario, senha) VALUES (?, ?, ?)";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("sss", $nome, $usuario, $senha_hash);
-
-    if ($stmt->execute()) {
-        echo "<script>alert('Usuário cadastrado com sucesso!'); window.location.href='../pagina_principal.php';</script>";
-    } else {
-        echo "Erro ao cadastrar: " . $stmt->error;
+        if ($stmt->execute()) {
+            echo "<script>alert('Usuário cadastrado com sucesso!'); window.location.href='../pagina_principal.php';</script>";
+        } else {
+            echo "Erro ao cadastrar: " . $stmt->error;
+        }
     }
-
     $stmt->close();
     $conn->close();
-    }
 }
 ?>
 
@@ -132,6 +150,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         <label>Confirmar Senha:</label>
         <input type="password" id="confirmar_senha" name="confirmar_senha" required>
+
+        <label>Nível de acesso</label>
+        <select id="nivel_acesso" name="nivel_acesso" required>
+            <option value="">Selecione uma opção</option>
+            <option value="1">Administrador</option>
+            <option value="2">Manutenção</option>
+            <option value="3">Usuário</option>
+            </select>
 
         <button type="submit">Cadastrar</button>
         <button type="button" onclick="window.location.href='../pagina_principal.php'">Voltar</button>

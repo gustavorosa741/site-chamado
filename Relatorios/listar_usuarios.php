@@ -9,7 +9,7 @@ if (!isset($_SESSION['usuario_id'])) {
 
 include '../BD/conexao.php';
 
-$sql = "SELECT id, nome, usuario, senha FROM usuario";
+$sql = "SELECT id, nome, usuario, senha, nivel_acesso FROM usuario";
 $result = $conn->query($sql);
 ?>
 
@@ -82,6 +82,7 @@ $result = $conn->query($sql);
             <th>ID</th>
             <th>Nome</th>
             <th>Usuario</th>
+            <th>Permissões</th>
             <th>Ações</th>
         </tr>
     </thead>
@@ -92,6 +93,8 @@ $result = $conn->query($sql);
                 <td><?= $row['id'] ?></td>
                 <td><?= htmlspecialchars($row['nome']) ?></td>
                 <td><?= htmlspecialchars($row['usuario']) ?></td>
+                <td><?= htmlspecialchars($row['nivel_acesso']) ?></td>
+
                 <td>
                     <a class="button" href="editar_usuario.php?id=<?= $row['id'] ?>">Editar</a>
                     <a class="button delete" href="excluir_usuario.php?id=<?= $row['id'] ?>" onclick="return confirm('Tem certeza que deseja excluir este usuário?')">Excluir</a>

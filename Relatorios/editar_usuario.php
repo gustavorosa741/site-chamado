@@ -20,14 +20,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $usuario = $_POST['usuario'] ?? '';
     $senha = $_POST['senha'] ?? '';
     $confirmar_senha = $_POST['confirmar_senha'] ?? '';
+    $permissao = $_POST['nivel_acesso'] ?? '';
 
     if ($senha !== $confirmar_senha) {
         echo "<script>alert('As senhas não coincidem!');</script>";
+
+    } else if (strlen($senha) < 8) {
+    echo "<script>alert('A senha deve ter no mínimo 8 caracteres!'); window.location.href='cadastro_usuario.php'</script>";
+    exit;
+
+    } else if (strlen($usuario) < 3) {
+        echo "<script>alert('O nome deve ter no mínimo 3 caracteres!'); window.location.href='cadastro_usuario.php'</script>";
+        exit;
+
     } else{
         $senha_hash = password_hash($senha, PASSWORD_DEFAULT);
 
-        $stmt = $conn->prepare("UPDATE usuario SET nome=?, usuario = ?, senha = ? WHERE id = ?");
-        $stmt->bind_param("sssi", $nome, $usuario, $senha_hash, $id);
+        $stmt = $conn->prepare("UPDATE usuario SET nome=?, usuario = ?, senha = ?, nivel_acesso = ? WHERE id = ?");
+        $stmt->bind_param("ssssi", $nome, $usuario, $senha_hash, $permissao,     $id);
 
         if ($stmt->execute()) {
             header("Location: listar_usuarios.php");
@@ -37,10 +47,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }} else {
         
-    $stmt = $conn->prepare("SELECT nome, usuario FROM usuario WHERE id = ?");
+    $stmt = $conn->prepare("SELECT nome, usuario, nivel_acesso FROM usuario WHERE id = ?");
     $stmt->bind_param("i", $id);
     $stmt->execute();
-    $stmt->bind_result($nome, $usuario);
+    $stmt->bind_result($nome, $usuario, $permissao);
     $stmt->fetch();
     $stmt->close();
 }
@@ -88,7 +98,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             font-size: 14px;
         }
 
-        input[type="text"] {
+        input[type="text"],
+        input[type="password"],
+        select {
             padding: 10px;
             border: 1px solid #253236;
             border-radius: 5px;
@@ -97,7 +109,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             transition: border-color 0.3s ease, box-shadow 0.3s ease;
         }
 
-        input[type="text"]:focus {
+        input[type="text"],
+        input[type="password"], 
+        select, :focus {
             border-color: #3399ff;
             box-shadow: 0 0 5px rgba(51, 153, 255, 0.5);
             outline: none;
@@ -133,10 +147,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <input type="text" id="usuario" name="usuario" value="<?= htmlspecialchars($usuario) ?>" required><br>
 
     <label for="senha">Senha:</label>
-    <input type="text" id="senha" name="senha" required><br>
+    <input type="password" id="senha" name="senha" required><br>
 
     <label for="confirmar_senha">Confirmar senha:</label>
-    <input type="text" id="confirmar_senha" name="confirmar_senha" required><br>
+    <input type="password" id="confirmar_senha" name="confirmar_senha" required><br>
+
+    <label>Nível de acesso</label>
+        <select id="nivel_acesso" name="nivel_acesso" required>
+            <option value="">Selecione uma opção</option>
+            <option value="1">Administrador</option>
+            <option value="2">Manutenção</option>
+            <option value="3">Usuário</option>
+            </select>
+    <br>
 
     <button type="submit">Salvar</button><br>
     <button type="button" onclick="window.location.href='listar_usuarios.php'">Cancelar</button><br>
