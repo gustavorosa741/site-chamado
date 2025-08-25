@@ -27,7 +27,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->bind_param("iissss",$id_funcionario, $maquina_id, $data, $problema, $categoria, $progresso);
 
     if ($stmt->execute()) {
-        echo "<script>alert('Chamado cadastrado com sucesso!'); window.location.href='../cadastros/cadastro_chamado.php';</script>";
+        echo "<script>alert('Chamado cadastrado com sucesso!'); window.location.href='../pagina_principal.php';</script>";
     } else {
         echo "Erro ao cadastrar: " . $stmt->error;
     }
