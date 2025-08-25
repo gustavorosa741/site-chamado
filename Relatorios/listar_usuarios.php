@@ -91,8 +91,10 @@ $result = $conn->query($sql);
             <?php while($row = $result->fetch_assoc()):
                 if ($row['nivel_acesso'] == '1') {
                     $row['nivel_acesso'] = 'Administrador';
+
                 } else if ($row['nivel_acesso'] == '2') {
                     $row['nivel_acesso'] = 'Manutenção';
+                    
                 } else {
                     $row['nivel_acesso'] = 'Usuário';
                 }
