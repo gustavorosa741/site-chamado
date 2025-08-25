@@ -31,6 +31,8 @@ class Chamado(Base):
     problema = Column(Text, nullable=False)
     solucao = Column(Text)
     progresso = Column(String(200), nullable=False)
+    urgencia = Column(String(200), nullable=False)
+
 
 class Maquina(Base):
     __tablename__ = 'maquina'
