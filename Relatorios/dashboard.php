@@ -644,11 +644,13 @@ $resolutionDataJson = json_encode($resolutionData);
         };
 
         // Função para exportar relatório
+        // Função para exportar relatório
         function exportRelatorio() {
             const periodo = document.getElementById('time-range').value;
             const setor = document.getElementById('setor-filter').value;
             
-            let url = '?export=1&periodo=' + periodo;
+            let url = '../exportar_relatorio.php?export=excel&periodo=' + periodo;
+            
             if (setor) {
                 url += '&setor=' + encodeURIComponent(setor);
             }
