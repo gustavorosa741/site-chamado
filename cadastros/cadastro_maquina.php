@@ -7,6 +7,8 @@ if (!isset($_SESSION['usuario_id'])) {
     exit;
 }
 
+include '../BD/conexao.php';
+
 $usuario_id = $_SESSION['usuario_id'];
 $sql = "SELECT nivel_acesso FROM usuario WHERE id = ?";
 $stmt = $conn->prepare($sql);
@@ -20,7 +22,6 @@ if ($usuario['nivel_acesso'] > 2) {
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    include '../BD/conexao.php';
 
     $nome = trim($_POST['nome']);
     $setor = trim($_POST['setor']);

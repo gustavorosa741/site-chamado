@@ -28,7 +28,7 @@ $result = $conn->query($sql);
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=0.5">
+    <meta name="viewport" content="width=device-width, initial-scale=0.4">
     <meta charset="UTF-8">
     <title>Lista de Usuários</title>
     <style>

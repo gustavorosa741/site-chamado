@@ -6,6 +6,7 @@ if (!isset($_SESSION['usuario_id'])) {
     header("Location: ../login.php");
     exit;
 }
+include '../BD/conexao.php';
 
 $usuario_id = $_SESSION['usuario_id'];
 $sql = "SELECT nivel_acesso FROM usuario WHERE id = ?";
@@ -20,7 +21,6 @@ if ($usuario['nivel_acesso'] > 2) {
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    include '../BD/conexao.php';
 
     $categoria = $_POST['categoria'];
 
