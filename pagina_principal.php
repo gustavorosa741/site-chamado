@@ -8,6 +8,19 @@ if (!isset($_SESSION['usuario_id'])) {
 
 include 'BD/conexao.php';
 
+$usuario_id = $_SESSION['usuario_id'];
+$sql_usuario = "SELECT nivel_acesso FROM usuario WHERE id = ?";
+$stmt = $conn->prepare($sql_usuario);
+$stmt->bind_param("i", $usuario_id);
+$stmt->execute();
+$result_usuario = $stmt->get_result();
+
+if ($result_usuario->num_rows > 0) {
+    $usuario = $result_usuario->fetch_assoc();
+    $nivel_acesso = $usuario['nivel_acesso'];
+} else {
+    $nivel_acesso = 3;
+}
 
 $chamados = [
     'Aberto' => [],
@@ -268,9 +281,11 @@ $conn->close();
                 <select id="cadastros" onchange="navegarCadastro(this.value)">
                     <option value="">Selecione</option>
                     <option value="cadastros/cadastro_chamado.php">Cadastrar Chamado</option>
-                    <option value="cadastros/cadastro_maquina.php">Cadastrar Máquina</option>
-                    <option value="cadastros/cadastro_usuario.php">Cadastrar Usuário</option>
-                    <option value="cadastros/cadastro_categoria.php">Cadastrar Categoria</option>
+                    <?php if ($nivel_acesso <= 2): ?>
+                        <option value="cadastros/cadastro_maquina.php">Cadastrar Máquina</option>
+                        <option value="cadastros/cadastro_usuario.php">Cadastrar Usuário</option>
+                        <option value="cadastros/cadastro_categoria.php">Cadastrar Categoria</option>
+                    <?php endif; ?>
                 </select>
             </div>
 
@@ -279,14 +294,17 @@ $conn->close();
                 <select id="relatorios" onchange="navegarCadastro(this.value)">
                     <option value="">Selecione</option>
                     <option value="Relatorios/listar_chamados.php">Chamados</option>
-                    <option value="Relatorios/listar_maquinas.php">Máquinas</option>
-                    <option value="Relatorios/listar_usuarios.php">Usuários</option>
-                    <option value="Relatorios/listar_categoria.php">Categoria</option>
-                    <option value="Relatorios/dashboard.php">Dashboard</option>
+                    <?php if ($nivel_acesso <= 2): ?>
+                        <option value="Relatorios/listar_maquinas.php">Máquinas</option>
+                        <option value="Relatorios/listar_usuarios.php">Usuários</option>
+                        <option value="Relatorios/listar_categoria.php">Categoria</option>
+                        <option value="Relatorios/dashboard.php">Dashboard</option>
+                    <?php endif; ?>
                 </select>
             </div>
         </div>
-
+        <?php if ($nivel_acesso <= 2): ?>
+                        
         <div class="status-columns">
 
             <div class="status-column">
@@ -474,6 +492,7 @@ $conn->close();
                     <?php endforeach; ?>
                 </div>
             </div>
+            <?php endif; ?>
 
     <script>
         function navegarCadastro(url) {

@@ -9,6 +9,18 @@ if (!isset($_SESSION['usuario_id'])) {
     exit;
 }
 
+$usuario_id = $_SESSION['usuario_id'];
+$sql = "SELECT nivel_acesso FROM usuario WHERE id = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("i", $usuario_id);
+$stmt->execute();
+$result = $stmt->get_result();
+$usuario = $result->fetch_assoc();
+
+if ($usuario['nivel_acesso'] > 2) {
+    echo "<script>alert('Você não tem permissão para acessar essa página!'); window.location.href='../pagina_principal.php';</script>";    
+}
+
 // Definir período padrão (30 dias)
 $periodo = isset($_GET['periodo']) ? intval($_GET['periodo']) : 30;
 $setor = isset($_GET['setor']) ? $_GET['setor'] : '';

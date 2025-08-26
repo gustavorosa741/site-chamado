@@ -9,6 +9,18 @@ if (!isset($_SESSION['usuario_id'])) {
 
 include '../BD/conexao.php';
 
+$usuario_id = $_SESSION['usuario_id'];
+$sql = "SELECT nivel_acesso FROM usuario WHERE id = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("i", $usuario_id);
+$stmt->execute();
+$result = $stmt->get_result();
+$usuario = $result->fetch_assoc();
+
+if ($usuario['nivel_acesso'] > 2) {
+    echo "<script>alert('Você não tem permissão para acessar essa página!'); window.location.href='../pagina_principal.php';</script>";    
+}
+
 if (!isset($_GET['id'])) {
     die("ID não fornecido.");
 }
@@ -26,12 +38,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         echo "<script>alert('As senhas não coincidem!');</script>";
 
     } else if (strlen($senha) < 8) {
-    echo "<script>alert('A senha deve ter no mínimo 8 caracteres!'); window.location.href='cadastro_usuario.php'</script>";
-    exit;
+        echo "<script>alert('A senha deve ter no mínimo 8 caracteres!');</script>";
+    
 
     } else if (strlen($usuario) < 3) {
-        echo "<script>alert('O nome deve ter no mínimo 3 caracteres!'); window.location.href='cadastro_usuario.php'</script>";
-        exit;
+        echo "<script>alert('O nome deve ter no mínimo 3 caracteres!');</script>";
+        
 
     } else{
         $senha_hash = password_hash($senha, PASSWORD_DEFAULT);
