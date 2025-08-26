@@ -18,7 +18,7 @@ $result = $stmt->get_result();
 $usuario = $result->fetch_assoc();
 
 if ($usuario['nivel_acesso'] > 2) {
-    echo "<script>alert('Você não tem permissão para acessar essa página!'); window.location.href='../pagina_principal.php';</script>";    
+    echo "<script>alert('Você não tem permissão para acessar essa página!'); window.location.href='listar_chamados.php';</script>";    
 }
 
 if (!isset($_GET['id'])) {
