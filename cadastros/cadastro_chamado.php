@@ -21,10 +21,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $categoria = $_POST['categoria'];
     $progresso = 'Aberto';
     $id_funcionario = $_SESSION['usuario_id'];
+    $urgencia = $_POST['urgencia'];
 
-    $sql = "INSERT INTO chamado (id_funcionario, id_maquina, data_abertura, problema, categoria, progresso) VALUES (?, ?, ?, ?, ?, ?)";
+
+    $sql = "INSERT INTO chamado (id_funcionario, id_maquina, data_abertura, problema, categoria, progresso, urgencia) VALUES (?, ?, ?, ?, ?, ?, ?)";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("iissss",$id_funcionario, $maquina_id, $data, $problema, $categoria, $progresso);
+    $stmt->bind_param("iisssss",$id_funcionario, $maquina_id, $data, $problema, $categoria, $progresso, $urgencia);
 
     if ($stmt->execute()) {
         echo "<script>alert('Chamado cadastrado com sucesso!'); window.location.href='../pagina_principal.php';</script>";
@@ -142,7 +144,7 @@ $conn->close();
     <form class="form-container" action="" method="post">
         <label for="maquina">Nome da Máquina:</label>
         <select id="maquina" name="maquina" required>
-            <option value="">-- Selecione uma máquina --</option>
+            <option value="">Selecione uma máquina</option>
             <?php foreach ($maquinas as $maquina): ?>
                 <option value="<?= htmlspecialchars($maquina['id']) ?>">
                     <?= htmlspecialchars($maquina['nome_maquina']) ?>
@@ -158,12 +160,21 @@ $conn->close();
 
         <label for="categoria">Categoria:</label>
         <select id="categoria" name="categoria" required>
-            <option value="">-- Selecione uma categoria --</option>
+            <option value="">Selecione uma categoria</option>
             <?php foreach ($categoria_chamado as $categoria): ?>
                 <option value="<?= htmlspecialchars($categoria['id']) ?>">
                     <?= htmlspecialchars($categoria['categoria']) ?>
                 </option>
             <?php endforeach; ?>
+        </select>
+
+        <label for="urgencia">Urgência:</label>        
+        <select name="urgencia" id="urgencia">
+            <option value="">Selecione uma urgência</option>
+            <option value="Baixa">Baixa</option>
+            <option value="Normal">Normal</option>
+            <option value="Alta">Alta</option>
+            <option value="Urgente">Urgente</option>
         </select>
                 
         <button type="submit">Cadastrar</button>

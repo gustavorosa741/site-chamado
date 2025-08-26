@@ -34,7 +34,8 @@ if (isset($_GET['export']) && $_GET['export'] == 'excel') {
                 c.data_fechamento,
                 c.problema,
                 c.solucao,
-                c.progresso
+                c.progresso,
+                c.urgencia
             FROM chamado c
             LEFT JOIN usuario u ON c.id_funcionario = u.id
             LEFT JOIN maquina m ON c.id_maquina = m.id
@@ -74,6 +75,7 @@ if (isset($_GET['export']) && $_GET['export'] == 'excel') {
                 <th>Setor</th>
                 <th>Categoria</th>
                 <th>Data Abertura</th>
+                <th>Urgencia</th>
                 <th>Data Fechamento</th>
                 <th>Problema</th>
                 <th>Solução</th>
@@ -94,6 +96,7 @@ if (isset($_GET['export']) && $_GET['export'] == 'excel') {
             echo "<td>" . htmlentities($row['problema'], ENT_QUOTES, 'UTF-8') . "</td>";
             echo "<td>" . ($row['solucao'] ? htmlentities($row['solucao'], ENT_QUOTES, 'UTF-8') : 'Não resolvido') . "</td>";
             echo "<td>" . $row['progresso'] . "% ($status)</td>";
+            echo "<td>" . htmlentities($row['urgencia'], ENT_QUOTES, 'UTF-8') . "</td>";
             echo "</tr>";
         }
         

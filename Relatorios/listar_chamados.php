@@ -94,6 +94,7 @@ $result = $conn->query($sql);
             <th>Problema</th>
             <th>Solução</th>
             <th>Progresso</th>
+            <th>Urgencia</th>
             <th>Ações</th>
         </tr>
     </thead>
@@ -110,6 +111,7 @@ $result = $conn->query($sql);
                 <td><?= htmlspecialchars($row['problema']) ?></td>
                 <td><?= htmlspecialchars($row['solucao']) ?></td>
                 <td><?= htmlspecialchars($row['progresso']) ?></td>
+                <td><?= htmlspecialchars($row['urgencia']) ?></td>
                 <td>
                     <p><a class="button" href="editar_chamado.php?id=<?= $row['id'] ?>">Editar</a></p>
                     <a class="button delete" href="excluir_chamado.php?id=<?= $row['id'] ?>" onclick="return confirm('Tem certeza que deseja excluir este chamado?')">Excluir</a>

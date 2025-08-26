@@ -319,6 +319,10 @@ $conn->close();
                                     <span class="chamado-label">Data Abertura:</span>
                                     <span><?= date('d/m/Y', strtotime($chamado['data_abertura']))?></span>
                                 </div>
+                                <div>
+                                    <span class="chamado-label">Urgência:</span>
+                                    <span><?= htmlspecialchars($chamado['urgencia'])?></span>
+                                </div>
                                 <br>
                                 <div class="chamado-mover_direita">
                                     <a class="button" href="comandos_chamados/mover_andamento.php?id=<?= $chamado['id'] ?>">>>></a>
@@ -358,6 +362,10 @@ $conn->close();
                                 <div class="chamado-info">
                                     <span class="chamado-label">Data Abertura:</span>
                                     <span><?= date('d/m/Y', strtotime($chamado['data_abertura']))?></span>
+                                </div>
+                                <div>
+                                    <span class="chamado-label">Urgência:</span>
+                                    <span><?= htmlspecialchars($chamado['urgencia'])?></span>
                                 </div>
                                 <br>
                                 <div class="chamado-mover_direita">
@@ -400,6 +408,10 @@ $conn->close();
                                     <span class="chamado-label">Data Abertura:</span>
                                     <span><?= date('d/m/Y', strtotime($chamado['data_abertura']))?></span>
                                 </div>
+                                <div>
+                                    <span class="chamado-label">Urgência:</span>
+                                    <span><?= htmlspecialchars($chamado['urgencia'])?></span>
+                                </div>
                                 <br>
                                 <div class="chamado-mover_direita">
                                     <a class="button" href="comandos_chamados/mover_andamento.php?id=<?= $chamado['id'] ?>"><<<</a>
@@ -440,6 +452,10 @@ $conn->close();
                                 <div class="chamado-info">
                                     <span class="chamado-label">Data Abertura:</span>
                                     <span><?= date('d/m/Y', strtotime($chamado['data_abertura']))?></span>
+                                </div>
+                                <div>
+                                    <span class="chamado-label">Urgência:</span>
+                                    <span><?= htmlspecialchars($chamado['urgencia'])?></span>
                                 </div>
                                 <div class="chamado-info">
                                     <span class = "chamado-label">Solução:</span>

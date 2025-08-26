@@ -23,9 +23,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $data_fechamento = $_POST['data_fechamento'] ?? '';
     $problema = $_POST['problema'] ?? '';
     $solucao = $_POST['solucao'] ?? '';
+    $urgencia = $_POST['urgencia'] ?? '';
 
-    $stmt = $conn->prepare("UPDATE chamado SET id_maquina = ?, categoria = ?, data_abertura = ?, data_fechamento = ?, problema = ?, solucao = ? WHERE id = ?");
-    $stmt->bind_param("ssssssi", $id_maquina, $categoria, $data_abertura, $data_fechamento, $problema, $solucao, $id);
+
+    $stmt = $conn->prepare("UPDATE chamado SET id_maquina = ?, categoria = ?, data_abertura = ?, data_fechamento = ?, problema = ?, solucao = ?, urgencia = ? WHERE id = ?");
+    $stmt->bind_param("sssssssi", $id_maquina, $categoria, $data_abertura, $data_fechamento, $problema, $solucao, $urgencia, $id);
 
     if ($stmt->execute()) {
         header("Location: listar_chamados.php");
@@ -35,10 +37,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 } else {
 
-    $stmt = $conn->prepare("SELECT id_maquina, categoria, data_abertura, data_fechamento, problema, solucao FROM chamado WHERE id = ?");
+    $stmt = $conn->prepare("SELECT id_maquina, categoria, data_abertura, data_fechamento, problema, solucao, urgencia FROM chamado WHERE id = ?");
     $stmt->bind_param("i", $id);
     $stmt->execute();
-    $stmt->bind_result($id_maquina, $categoria, $data_abertura, $data_fechamento, $problema, $solucao);
+    $stmt->bind_result($id_maquina, $categoria, $data_abertura, $data_fechamento, $problema, $solucao, $urgencia);
     $stmt->fetch();
     $stmt->close();
 }
@@ -180,6 +182,15 @@ $result = $conn->query($sql_categoria);
 
     <label for="solucao">Solução:</label>
     <input type="text" id="solucao" name="solucao" value="<?= htmlspecialchars($solucao) ?>" required><br>
+
+    <label for="urgencia">Urgência:</label>
+    <select name="urgencia" id="urgencia" required>
+        <option value="">-- Selecione uma urgência --</option>
+        <option value="Baixa">Baixa</option>
+        <option value="Normal">Normal</option>
+        <option value="Alta">Alta</option>
+        <option value="Urgente">Urgente</option>
+    </select>
 
     <button type="submit">Salvar</button><br>
     <button type="button" onclick="window.location.href='listar_chamados.php'">Cancelar</button><br>
