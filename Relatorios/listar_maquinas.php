@@ -21,7 +21,7 @@ if ($usuario['nivel_acesso'] > 2) {
     echo "<script>alert('Você não tem permissão para acessar essa página!'); window.location.href='../pagina_principal.php';</script>";    
 }
 
-$sql = "SELECT id, nome_maquina, setor FROM maquina";
+$sql = "SELECT id, nome_maquina, setor FROM maquina ORDER BY nome_maquina ASC";
 $result = $conn->query($sql);
 ?>
 
