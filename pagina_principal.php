@@ -179,6 +179,26 @@ $conn->close();
             border-left-color: #06D6A0;
         }
 
+        .chamado-card.urgente {
+            background-color: #FFCCCB; /* Vermelho claro */
+            border-left-color: #FF0000 !important; /* Vermelho escuro para a borda */
+        }
+
+        .chamado-card.alta {
+            background-color: #FFFACD; /* Amarelo claro */
+            border-left-color: #FFD700 !important; /* Amarelo escuro para a borda */
+        }
+
+        .chamado-card.normal {
+            background-color: #ADD8E6; /* Azul claro */
+            border-left-color: #0000FF !important; /* Azul escuro para a borda */
+        }
+
+        .chamado-card.baixa {
+            background-color: #90EE90; /* Verde claro */
+            border-left-color: #008000 !important; /* Verde escuro para a borda */
+        }
+
         .chamado-header {
             display: flex;
             justify-content: space-between;
@@ -311,7 +331,7 @@ $conn->close();
                 <div class="status-title aberto-title">Abertos</div>
                 <div class="chamados-container" id="abertos-container">
                     <?php foreach ($chamados['Aberto'] as $chamado): ?>
-                        <div class="chamado-card aberto">
+                        <div class="chamado-card aberto <?= strtolower(str_replace(' ', '_', $chamado['urgencia'])) ?>">
                             <div class="chamado-header">
                                 <span class="chamado-id">#ID-<?= str_pad($chamado['id'], 3, '0', STR_PAD_LEFT) ?></span>
                                 <span class="chamado-data"><?= date('d/m/Y', strtotime($chamado['data_abertura'])) ?></span>
@@ -355,7 +375,7 @@ $conn->close();
                 <div class="status-title andamento-title">Em Andamento</div>
                 <div class="chamados-container" id="andamento-container">
                     <?php foreach ($chamados['Em andamento'] as $chamado): ?>
-                        <div class="chamado-card andamento">    
+                        <div class="chamado-card andamento <?= strtolower(str_replace(' ', '_', $chamado['urgencia'])) ?>">    
                             <div class="chamado-header">
                                 <span class="chamado-id">#ID-<?= str_pad($chamado['id'], 3, '0', STR_PAD_LEFT) ?></span>
                                 <span class="chamado-data"><?= date('d/m/Y', strtotime($chamado['data_abertura'])) ?></span>
@@ -400,7 +420,7 @@ $conn->close();
                 <div class="status-title espera-title">Aguardando Peças</div>
                 <div class="chamados-container" id="espera-container">
                     <?php foreach ($chamados['Espera'] as $chamado): ?>
-                        <div class="chamado-card espera">    
+                        <div class="chamado-card espera <?= strtolower(str_replace(' ', '_', $chamado['urgencia'])) ?>">   
                             <div class="chamado-header">
                                 <span class="chamado-id">#ID-<?= str_pad($chamado['id'], 3, '0', STR_PAD_LEFT) ?></span>
                                 <span class="chamado-data"><?= date('d/m/Y', strtotime($chamado['data_abertura'])) ?></span>

@@ -1,7 +1,7 @@
 <?php
 $servidor = "localhost";
 $usuario = "root";          
-$senha = "";                
+$senha = "1234#abcd";                
 $banco = "chamados";
 
 $conn = new mysqli($servidor, $usuario, $senha, $banco);
