@@ -2,24 +2,50 @@
 session_start();
 include 'BD/conexao.php';
 
+$consulta_usuario = "SELECT * FROM usuario";
+$resultado_usuario = $conn->query($consulta_usuario);
+
+if ($resultado_usuario->num_rows == 0) {
+    $nome = 'admin';
+    $usuario = 'admin';
+    $senha = '1234';
+    $permissao = '1';
+
+    $senha_hash = password_hash($senha, PASSWORD_DEFAULT);
+
+    $sql = "INSERT INTO usuario (nome, usuario, senha, nivel_acesso) VALUES (?, ?, ?, ?)";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("ssss", $nome, $usuario, $senha_hash, $permissao);
+    
+    if ($stmt->execute()) {
+        echo "<script>console.log('Usuário admin criado automaticamente');</script>";
+    } else {
+        echo "<script>console.error('Erro ao criar usuário admin: " . $conn->error . "');</script>";
+    }
+    
+    $stmt->close();
+}
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $usuario = $_POST['usuario'];
     $senha = $_POST['senha'];
 
-    $sql = "SELECT id, senha FROM usuario WHERE usuario = ?";
+    $sql = "SELECT id, nome, senha, nivel_acesso FROM usuario WHERE usuario = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("s", $usuario);
     $stmt->execute();
     $stmt->store_result();
 
     if ($stmt->num_rows == 1) {
-        $stmt->bind_result($id, $senha_hash);
+        $stmt->bind_result($id, $nome, $senha_hash, $nivel_acesso);
         $stmt->fetch();
 
-        // Verifica senha
         if (password_verify($senha, $senha_hash)) {
             $_SESSION['usuario_id'] = $id;
-            $_SESSION['usuario_nome'] = $usuario;
+            $_SESSION['usuario_nome'] = $nome;
+            $_SESSION['usuario'] = $usuario;
+            $_SESSION['nivel_acesso'] = $nivel_acesso;
+            
             header("Location: ../pagina_principal.php");
             exit;
         } else {
@@ -30,8 +56,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     $stmt->close();
-    $conn->close();
 }
+
+$conn->close();
 ?>
 
 <!DOCTYPE html>
