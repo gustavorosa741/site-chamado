@@ -81,6 +81,32 @@ $result = $stmt->get_result();
         th {
             background-color: #3399ff;
             color: white;
+            cursor: pointer;
+            position: relative;
+        }
+        th:hover {
+            background-color: #2980b9;
+        }
+        th::after {
+            content: '';
+            display: inline-block;
+            margin-left: 5px;
+            width: 0;
+            height: 0;
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-top: 5px solid #fff;
+            opacity: 0.5;
+        }
+        th.asc::after {
+            border-top: none;
+            border-bottom: 5px solid #fff;
+            opacity: 1;
+        }
+        th.desc::after {
+            border-top: 5px solid #fff;
+            border-bottom: none;
+            opacity: 1;
         }
         tr:hover {
             background-color: #e6f0ff;
@@ -132,19 +158,19 @@ $result = $stmt->get_result();
     </div>
 <?php endif; ?>
 
-<table>
+<table id="tabelaChamados">
     <thead>
         <tr>
-            <th>ID</th>
-            <th>Solicitante</th>
-            <th>Maquina</th>
-            <th>Categoria</th>
-            <th>Data Abertura</th>
-            <th>Data Fechamento</th>
-            <th>Problema</th>
-            <th>Solução</th>
-            <th>Progresso</th>
-            <th>Urgencia</th>
+            <th data-sort="id" data-type="number">ID</th>
+            <th data-sort="nome" data-type="text">Solicitante</th>
+            <th data-sort="nome_maquina" data-type="text">Maquina</th>
+            <th data-sort="categoria" data-type="text">Categoria</th>
+            <th data-sort="data_abertura" data-type="date">Data Abertura</th>
+            <th data-sort="data_fechamento" data-type="date">Data Fechamento</th>
+            <th data-sort="problema" data-type="text">Problema</th>
+            <th data-sort="solucao" data-type="text">Solução</th>
+            <th data-sort="progresso" data-type="text">Progresso</th>
+            <th data-sort="urgencia" data-type="text">Urgencia</th>
             <th>Ações</th>
         </tr>
     </thead>
@@ -156,8 +182,10 @@ $result = $stmt->get_result();
                 <td><?= htmlspecialchars($row['nome']) ?></td>
                 <td><?= htmlspecialchars($row['nome_maquina']) ?></td>
                 <td><?= htmlspecialchars($row['categoria']) ?></td>
-                <td><?= date('d/m/Y', strtotime($row['data_abertura'])) ?></td>
-                <td><?= $row['data_fechamento'] ? date('d/m/Y H:i', strtotime($row['data_fechamento'])) : 'Em aberto' ?></td>
+                <td data-sort-value="<?= strtotime($row['data_abertura']) ?>"><?= date('d/m/Y', strtotime($row['data_abertura'])) ?></td>
+                <td data-sort-value="<?= $row['data_fechamento'] ? strtotime($row['data_fechamento']) : 0 ?>">
+                    <?= $row['data_fechamento'] ? date('d/m/Y H:i', strtotime($row['data_fechamento'])) : 'Em aberto' ?>
+                </td>
                 <td><?= htmlspecialchars($row['problema']) ?></td>
                 <td><?= htmlspecialchars($row['solucao']) ?></td>
                 <td><?= htmlspecialchars($row['progresso']) ?></td>
@@ -181,6 +209,94 @@ $result = $stmt->get_result();
 </table>
 
 <br>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const tabela = document.getElementById('tabelaChamados');
+    const thead = tabela.querySelector('thead');
+    const tbody = tabela.querySelector('tbody');
+    const ths = thead.querySelectorAll('th[data-sort]');
+    
+    let currentSort = {
+        column: null,
+        direction: 'none' // none, asc, desc
+    };
+    
+    ths.forEach(th => {
+        th.addEventListener('click', function() {
+            const column = this.getAttribute('data-sort');
+            const type = this.getAttribute('data-type');
+            
+            // Remove classes de ordenação de todos os cabeçalhos
+            ths.forEach(header => {
+                header.classList.remove('asc', 'desc');
+            });
+            
+            // Define a nova direção de ordenação
+            if (currentSort.column === column) {
+                if (currentSort.direction === 'asc') {
+                    currentSort.direction = 'desc';
+                    this.classList.add('desc');
+                } else if (currentSort.direction === 'desc') {
+                    currentSort.direction = 'none';
+                    // Volta à ordem original (como veio do PHP)
+                    resetSort();
+                    return;
+                } else {
+                    currentSort.direction = 'asc';
+                    this.classList.add('asc');
+                }
+            } else {
+                currentSort.column = column;
+                currentSort.direction = 'asc';
+                this.classList.add('asc');
+            }
+            
+            // Ordena a tabela
+            sortTable(column, currentSort.direction, type);
+        });
+    });
+    
+    function sortTable(column, direction, type) {
+        if (direction === 'none') return;
+        
+        const rows = Array.from(tbody.querySelectorAll('tr'));
+        const colIndex = Array.from(ths).findIndex(th => th.getAttribute('data-sort') === column);
+        
+        rows.sort((a, b) => {
+            let aValue = a.cells[colIndex].getAttribute('data-sort-value') || a.cells[colIndex].textContent.trim();
+            let bValue = b.cells[colIndex].getAttribute('data-sort-value') || b.cells[colIndex].textContent.trim();
+            
+            // Converte valores conforme o tipo
+            if (type === 'number') {
+                aValue = parseFloat(aValue) || 0;
+                bValue = parseFloat(bValue) || 0;
+            } else if (type === 'date') {
+                aValue = parseFloat(aValue) || 0;
+                bValue = parseFloat(bValue) || 0;
+            }
+            
+            // Comparação
+            if (aValue < bValue) return direction === 'asc' ? -1 : 1;
+            if (aValue > bValue) return direction === 'asc' ? 1 : -1;
+            return 0;
+        });
+        
+        // Remove todas as linhas atuais
+        while (tbody.firstChild) {
+            tbody.removeChild(tbody.firstChild);
+        }
+        
+        // Adiciona as linhas ordenadas
+        rows.forEach(row => tbody.appendChild(row));
+    }
+    
+    function resetSort() {
+        // Recarrega a página para voltar à ordem original
+        location.reload();
+    }
+});
+</script>
 
 </body>
 </html>
