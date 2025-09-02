@@ -5,7 +5,7 @@ if (!isset($_SESSION['usuario_id'])) {
     exit;
 }
 
-include 'BD/conexao.php';
+include '../BD/conexao.php';
 
 // Definir codificação para UTF-8
 header('Content-Type: text/html; charset=utf-8');
