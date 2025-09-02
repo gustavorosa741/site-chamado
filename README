@@ -30,10 +30,13 @@ adicione ao final:
 
 127.0.0.1 localhost
 
-4. inicie o apache pelo painel do xampp
+4. inicie o apache e o MySQL pelo painel do xampp
 
-5. acesse o site pelo: http://localhost/  (https irá cair na pagina do xampp)
+5. Instale todas as bibliotecas do python com: pip install -r requirements.txt
 
-6. Instale todas as bibliotecas do python com: pip install -r requirements.txt
-O arquivo python serve para criar o banco de dados, limpo sem nenhum dados( Usado para instalação em novo servidor ou em testes)
+6. Atualize seu .env com as informações do seu banco e rode o criar_BD.py (Ira criar todas as tabelas do banco de dados)
+
+7. atualiza as informações do banco de BD/conexao.php
+
+8. acesse o site pelo: http://localhost/  (https irá cair na pagina do xampp)
 
