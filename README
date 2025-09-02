@@ -33,3 +33,7 @@ adicione ao final:
 4. inicie o apache pelo painel do xampp
 
 5. acesse o site pelo: http://localhost/  (https irá cair na pagina do xampp)
+
+6. Instale todas as bibliotecas do python com: pip install -r requirements.txt
+O arquivo python serve para criar o banco de dados, limpo sem nenhum dados( Usado para instalação em novo servidor ou em testes)
+
