@@ -96,7 +96,7 @@ if (isset($_GET['export']) && $_GET['export'] == 'excel') {
             echo "<td>" . ($row['data_fechamento'] ? $row['data_fechamento'] : 'Em aberto') . "</td>";
             echo "<td>" . htmlentities($row['problema'], ENT_QUOTES, 'UTF-8') . "</td>";
             echo "<td>" . ($row['solucao'] ? htmlentities($row['solucao'], ENT_QUOTES, 'UTF-8') : 'Não resolvido') . "</td>";
-            echo "<td>" . $row['progresso'] . "% ($status)</td>";
+            echo "<td>" . $row['progresso'] . " ($status)</td>";
             echo "</tr>";
         }
         
