@@ -59,10 +59,9 @@ $result = $stmt->get_result();
     <link rel="stylesheet" href="../assets/css/listas.css">
     <meta charset="UTF-8">
     <title>Lista de Chamados</title>
-
 </head>
-<body>
 
+<body>
 <h1>Chamados Cadastrados </h1>
 <a class="button-voltar1" href="../pagina_principal.php">Voltar</a>
 
