@@ -3,7 +3,6 @@
 session_start();
 include '../BD/conexao.php';
 
-// Verificar autenticação
 if (!isset($_SESSION['usuario_id'])) {
     header("Location: login.php");
     exit;
@@ -39,11 +38,9 @@ if (!empty($setor)) {
     $where_condicoes .= " AND m.setor = '$setor_escape'";
 }
 
-// Buscar dados do dashboard
 $machineData = [];
 $categoryData = [];
 
-// Chamados por máquina - CORREÇÃO: usar $where_condicoes
 $query = "
     SELECT m.nome_maquina, COUNT(c.id) as total 
     FROM chamado c 
@@ -65,7 +62,6 @@ if ($stmt) {
     error_log("Erro na consulta de máquinas: " . $conn->error);
 }
 
-// Chamados por categoria - CORREÇÃO: usar $where_condicoes
 $query = "
     SELECT cat.categoria, COUNT(c.id) as total 
     FROM chamado c 
@@ -512,8 +508,6 @@ $resolutionDataJson = json_encode($resolutionData);
             });
         };
 
-        // Função para exportar relatório
-        // Função para exportar relatório
         function exportRelatorio() {
             const periodo = document.getElementById('time-range').value;
             const setor = document.getElementById('setor-filter').value;
