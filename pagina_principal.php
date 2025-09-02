@@ -58,10 +58,14 @@ $conn->close();
     
 </head>
 <body>
-    <div class="container">
-        <img class="logo" src="./assets/imagens/logo.jpg" alt="Logo" style="height: 60px;">
-        <button class="button-voltar" onclick="window.location.href='../logout.php'">Sair</button>
-        <h1>🛠️Chamados Manutenção🛠️</h1>
+        <div class="container">
+            <img class="logo" src="./assets/imagens/logo.jpg" alt="Logo" style="height: 60px;">
+            <button class="button-voltar" onclick="Menu()">&#9776</button>
+            <ul class="vertical-menu" id="id-menu-vertical">
+                <li><a href="">Alterar senha</a></li>
+                <li><a href="logout.php">Sair</a></li>
+            </ul>
+            <h1>🛠️Chamados Manutenção🛠️</h1>
         
         <div class="menu-container">
             <div class="menu-item">
@@ -288,6 +292,30 @@ $conn->close();
                 window.location.href = url;
             }
         }
+
+        function Menu() {
+            var menu = document.getElementById("id-menu-vertical");
+            if (menu.style.display === "none" || menu.style.display === "") {
+                menu.style.display = "block";
+            } else {
+                menu.style.display = "none";
+            }
+        }
+        
+        document.addEventListener('click', function(event) {
+            var menu = document.getElementById('id-menu-vertical');
+            var button = document.querySelector('.button-voltar');
+            
+            if (menu.style.display === 'block' && 
+                !menu.contains(event.target) && 
+                event.target !== button) {
+                menu.style.display = 'none';
+            }
+        });
+
+        document.getElementById('id-menu-vertical').addEventListener('click', function(event) {
+            event.stopPropagation();
+        });
 
         </script>
 </body>
