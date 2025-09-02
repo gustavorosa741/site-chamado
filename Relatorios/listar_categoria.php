@@ -29,63 +29,10 @@ $result = $conn->query($sql);
 <html lang="pt-br">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=0.7">
+    <link rel="stylesheet" href="../assets/css/listas.css">
     <meta charset="UTF-8">
     <title>Lista de Categorias</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f8ff;
-            color: #003366;
-            padding: 20px;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-            background: white;
-            border-radius: 8px;
-            overflow: hidden;
-        }
-        th, td {
-            padding: 12px 15px;
-            border-bottom: 1px solid #ddd;
-            text-align: left;
-            max-width: 170px;
-            word-wrap: break-word;
-            white-space: normal;
-        }
-        th {
-            background-color: #3399ff;
-            color: white;
-        }
-        tr:hover {
-            background-color: #e6f0ff;
-        }
-        a.button {
-            background-color: #3399ff;
-            color: white;
-            padding: 6px 12px;
-            border-radius: 4px;
-            text-decoration: none;
-            font-weight: bold;
-            margin-right: 5px;
-        }
-        a.button.delete {
-            background-color: #cc3333;
-        }
-
-        a.button-voltar {
-            background-color: #3399ff;
-            color: white;
-            padding: 12px 30px;
-            border-radius: 4px;
-            text-decoration: none;
-            font-weight: bold;
-            margin-right: 5px;
-            margin-top: 20px;
-        }
-
-    </style>
+   
 </head>
 <body>
 

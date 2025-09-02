@@ -81,78 +81,10 @@ $result = $conn->query($sql_categoria);
 <html lang="pt-br">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=0.9">
+    <link rel="stylesheet" href="../assets/css/cadastros.css">
     <meta charset="UTF-8">
     <title>Editar Chamado</title>
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f0f8ff;
-            color: #003366;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-        }
 
-        h1 {
-            margin-top: 40px;
-            margin-bottom: 30px;
-            font-size: 28px;
-        }
-
-        .form-container {
-            background-color: white;
-            padding: 30px 40px;
-            border-radius: 10px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-            width: 350px;
-            display: flex;
-            flex-direction:column;
-            text-align: left;
-        }
-
-        label {
-            font-weight: bold;
-            margin-bottom: 5px;
-            font-size: 14px;
-        }
-
-        input[type="text"],
-        input[type="date"], 
-        select{
-            padding: 10px;
-            border: 1px solid #253236;
-            border-radius: 5px;
-            font-size: 14px;
-            color: #003366;
-            transition: border-color 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        input[type="text"],
-        input[type="date"], :focus {
-            border-color: #3399ff;
-            box-shadow: 0 0 5px rgba(51, 153, 255, 0.5);
-            outline: none;
-        }
-
-        button {
-            padding: 12px;
-            background-color: #3399ff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 15px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        button:hover {
-            background-color: #267acc;
-        }
-    </style>
 </head>
 <body>
 
@@ -184,16 +116,16 @@ $result = $conn->query($sql_categoria);
     </select>
 
     <label for="data_abertura">Data_abertura:</label>
-    <input type="date" id="data_abertura" name="data_abertura" value="<?= htmlspecialchars($data_abertura) ?>" required><br>
+    <input type="date" id="data_abertura" name="data_abertura" value="<?= htmlspecialchars($data_abertura) ?>" required>
 
     <label for="data_fechamento">Data_fechamento:</label>
-    <input type="date" id="data_fechamento" name="data_fechamento" value="<?= htmlspecialchars($data_fechamento) ?>" required><br>
+    <input type="date" id="data_fechamento" name="data_fechamento" value="<?= htmlspecialchars($data_fechamento) ?>" required>
 
     <label for="problema">Problema:</label>
-    <input type="text" id="problema" name="problema" value="<?= htmlspecialchars($problema) ?>" required><br>
+    <input type="text" id="problema" name="problema" value="<?= htmlspecialchars($problema) ?>" required>
 
     <label for="solucao">Solução:</label>
-    <input type="text" id="solucao" name="solucao" value="<?= htmlspecialchars($solucao) ?>" required><br>
+    <input type="text" id="solucao" name="solucao" value="<?= htmlspecialchars($solucao) ?>" required>
 
     <label for="urgencia">Urgência:</label>
     <select name="urgencia" id="urgencia" required>
@@ -204,7 +136,7 @@ $result = $conn->query($sql_categoria);
         <option value="Urgente">Urgente</option>
     </select>
 
-    <button type="submit">Salvar</button><br>
+    <button type="submit">Salvar</button>
     <button type="button" onclick="window.location.href='listar_chamados.php'">Cancelar</button><br>
 </form>
 

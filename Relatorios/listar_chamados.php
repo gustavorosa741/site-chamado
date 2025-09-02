@@ -56,97 +56,15 @@ $result = $stmt->get_result();
 <html lang="pt-br">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=0.5">
+    <link rel="stylesheet" href="../assets/css/listas.css">
     <meta charset="UTF-8">
     <title>Lista de Chamados</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f8ff;
-            color: #003366;
-            padding: 20px;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-            background: white;
-            border-radius: 8px;
-            overflow: hidden;
-        }
-        th, td {
-            padding: 10px 15px;
-            border-bottom: 1px solid #ddd;
-            text-align: left;
-        }
-        th {
-            background-color: #3399ff;
-            color: white;
-            cursor: pointer;
-            position: relative;
-        }
-        th:hover {
-            background-color: #2980b9;
-        }
-        th::after {
-            content: '';
-            display: inline-block;
-            margin-left: 5px;
-            width: 0;
-            height: 0;
-            border-left: 5px solid transparent;
-            border-right: 5px solid transparent;
-            border-top: 5px solid #fff;
-            opacity: 0.5;
-        }
-        th.asc::after {
-            border-top: none;
-            border-bottom: 5px solid #fff;
-            opacity: 1;
-        }
-        th.desc::after {
-            border-top: 5px solid #fff;
-            border-bottom: none;
-            opacity: 1;
-        }
-        tr:hover {
-            background-color: #e6f0ff;
-        }
-        a.button {
-            background-color: #3399ff;
-            color: white;
-            padding: 6px 12px;
-            border-radius: 4px;
-            text-decoration: none;
-            font-weight: bold;
-            margin-right: 5px;
-        }
-        a.button.delete {
-            background-color: #cc3333;
-        }
-        a.button-voltar {
-            background-color: #3399ff;
-            color: white;
-            padding: 12px 30px;
-            border-radius: 4px;
-            text-decoration: none;
-            font-weight: bold;
-            margin-right: 5px;
-            display: inline-block;
-            float: right;
-        }
-        .info-nivel {
-            background-color: #e6f0ff;
-            padding: 10px;
-            border-radius: 5px;
-            margin-bottom: 15px;
-            border-left: 4px solid #3399ff;
-        }
-    </style>
+
 </head>
 <body>
 
 <h1>Chamados Cadastrados </h1>
-<a class="button-voltar" href="../pagina_principal.php">Voltar</a>
+<a class="button-voltar1" href="../pagina_principal.php">Voltar</a>
 
 <?php if ($nivel_acesso > 2): ?>
     <div class="info-nivel">

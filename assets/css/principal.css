@@ -1,0 +1,242 @@
+body {
+    margin: 0;
+    padding: 20px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f0f8ff;
+    color: #003366;
+}
+
+.container {
+    max-width: 100%;
+    margin: 0 auto;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #003366;
+}
+
+.menu-container {
+    background-color: white;
+    padding: 15px 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    gap: 30px;
+    margin-bottom: 30px;
+}
+
+.menu-item {
+    flex: 1;
+}
+
+label {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 8px;
+}
+
+select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
+.status-columns {
+    display: flex;
+    gap: 15px;
+    overflow-x: auto;
+    padding-bottom: 20px;
+}
+
+.status-column {
+    flex: 1;
+    min-width: 300px;
+    background-color: #f9f9f9;
+    border-radius: 5px;
+    height: 800px;
+    /* ou a altura desejada */
+    overflow-y: auto;
+    /* scroll vertical quando necessário */
+
+}
+
+.status-title {
+    font-size: 18px;
+    font-weight: bold;
+    padding: 12px;
+    color: white;
+    border-radius: 5px 5px 0 0;
+    text-align: center;
+    position: sticky;
+    top: 0;
+    background: white;
+    z-index: 10;
+}
+
+.aberto-title {
+    background-color: #FF6B6B;
+}
+
+.andamento-title {
+    background-color: #4ECDC4;
+}
+
+.espera-title {
+    background-color: #FFD166;
+}
+
+.concluido-title {
+    background-color: #06D6A0;
+}
+
+.chamados-container {
+    padding: 15px;
+    min-height: 200px;
+}
+
+.chamado-card {
+    background-color: white;
+    border-radius: 5px;
+    padding: 15px;
+    margin-bottom: 15px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    border-left: 4px solid;
+}
+
+.chamado-card.aberto {
+    border-left-color: #FF6B6B;
+
+}
+
+.chamado-card.andamento {
+    border-left-color: #4ECDC4;
+}
+
+.chamado-card.espera {
+    border-left-color: #FFD166;
+}
+
+.chamado-card.concluido {
+    border-left-color: #06D6A0;
+}
+
+.chamado-card.urgente {
+    background-color: #FFCCCB;
+    /* Vermelho claro */
+    border-left-color: #FF0000 !important;
+    /* Vermelho escuro para a borda */
+}
+
+.chamado-card.alta {
+    background-color: #FFFACD;
+    /* Amarelo claro */
+    border-left-color: #FFD700 !important;
+    /* Amarelo escuro para a borda */
+}
+
+.chamado-card.normal {
+    background-color: #ADD8E6;
+    /* Azul claro */
+    border-left-color: #0000FF !important;
+    /* Azul escuro para a borda */
+}
+
+.chamado-card.baixa {
+    background-color: #90EE90;
+    /* Verde claro */
+    border-left-color: #008000 !important;
+    /* Verde escuro para a borda */
+}
+
+.chamado-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.chamado-id {
+    color: #666;
+}
+
+.chamado-data {
+    font-size: 0.9em;
+    color: #666;
+}
+
+.chamado-body {
+    margin: 10px 0;
+}
+
+.chamado-info {
+    display: flex;
+    margin-bottom: 5px;
+}
+
+.chamado-label {
+    font-weight: bold;
+    min-width: 100px;
+}
+
+.chamado-mover-direita {
+    float: right;
+}
+
+.button {
+    background-color: #4ECDC4;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.button:hover {
+    background-color: #3aa89f;
+}
+
+@media (max-width: 1200px) {
+    .status-columns {
+        flex-wrap: wrap;
+    }
+
+    .status-column {
+        min-width: calc(50% - 15px);
+    }
+}
+
+@media (max-width: 768px) {
+    .menu-container {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .status-column {
+        min-width: 100%;
+    }
+}
+
+.button-voltar {
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: white;
+    font-size: 14px;
+}
+
+.button-voltar {
+    background-color: #2980b9;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    float: right;
+}
+
+.logo {
+    float: left;
+}
