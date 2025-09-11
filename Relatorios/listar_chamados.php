@@ -101,7 +101,7 @@ $result = $stmt->get_result();
                 <td><?= htmlspecialchars($row['categoria']) ?></td>
                 <td data-sort-value="<?= strtotime($row['data_abertura']) ?>"><?= date('d/m/Y', strtotime($row['data_abertura'])) ?></td>
                 <td data-sort-value="<?= $row['data_fechamento'] ? strtotime($row['data_fechamento']) : 0 ?>">
-                    <?= $row['data_fechamento'] ? date('d/m/Y H:i', strtotime($row['data_fechamento'])) : 'Em aberto' ?>
+                    <?= $row['data_fechamento'] ? date('d/m/Y', strtotime($row['data_fechamento'])) : 'Em aberto' ?>
                 </td>
                 <td><?= htmlspecialchars($row['problema']) ?></td>
                 <td><?= htmlspecialchars($row['solucao']) ?></td>
