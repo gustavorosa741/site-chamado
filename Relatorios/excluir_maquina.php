@@ -1,5 +1,4 @@
 <?php
-
 session_start();
 
 if (!isset($_SESSION['usuario_id'])) {
@@ -11,16 +10,29 @@ include '../BD/conexao.php';
 
 if (isset($_GET['id'])) {
     $id = intval($_GET['id']);
-
-    $sql = "DELETE FROM maquina WHERE id = $id";
-
-    if ($conn->query($sql) === TRUE) {
-        header("Location: listar_maquinas.php");
-        exit;
+    
+    $consulta = "SELECT COUNT(*) as total FROM chamado WHERE id_maquina = ?";
+    $stmt = $conn->prepare($consulta);
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $row = $result->fetch_assoc();
+    
+    if ($row['total'] > 0) {
+        // Máquina está em uso - não pode excluir
+        echo "<script>alert('Esta máquina está em uso e não é possivel excluir.'); window.location.href='listar_maquinas.php';</script>";
     } else {
-        echo "Erro ao excluir: " . $conn->error;
+        // Máquina não está em uso - pode excluir
+        $sql = "DELETE FROM maquina WHERE id = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("i", $id);
+        
+        if ($stmt->execute()) {
+            header("Location: listar_maquinas.php?sucesso=excluido");
+            exit;
+        } else {
+            echo "Erro ao excluir: " . $conn->error;
+        }
     }
-} else {
-    echo "ID não fornecido.";
 }
 ?>
