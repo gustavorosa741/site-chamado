@@ -14,13 +14,13 @@ C:\xampp\apache\conf\extra\httpd-vhosts.conf
 Adicione ao final:
 
 <VirtualHost *:80>
-    DocumentRoot "Caminho da pasta do projeto"
-    ServerName chamados.local
-    <Directory "Caminho da pasta do projeto">
+    DocumentRoot "C:\Users\gustavo.rosa\Documents\Projetos\chamados"
+    ServerName chamados.manutencao
+<Directory "C:\Users\gustavo.rosa\Documents\Projetos\chamados">
         Options Indexes FollowSymLinks
         AllowOverride All
         Require all granted
-    </Directory>
+</Directory>
 </VirtualHost>
 
 3. Navegue até:
