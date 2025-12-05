@@ -1,12 +1,9 @@
 from sqlalchemy import Column, Integer, String, Date, Text, ForeignKey
-from sqlalchemy.orm import relationship
 from sqlalchemy import create_engine
 from sqlalchemy.orm import declarative_base, sessionmaker
 from dotenv import load_dotenv
 import os
 from werkzeug.security import generate_password_hash
-from enum import Enum as PythonEnum
-from sqlalchemy import Enum
 
 load_dotenv()
 
