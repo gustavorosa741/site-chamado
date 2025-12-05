@@ -1,5 +1,6 @@
+ 
 <?php
-$modo_teste = false; // coloque false para voltar ao normal
+$modo_teste = false; // coloque false para voltar ao normal (modo teste pula tela de login para facilitar atualizações)
 
 if ($modo_teste) {
     header("Location: pagina_principal.php");
