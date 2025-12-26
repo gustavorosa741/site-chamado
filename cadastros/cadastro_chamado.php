@@ -1,19 +1,24 @@
 <?php
 
+// Inicia a sessão para controle de autenticação
 session_start();
 
+// Verifica se o usuário está autenticado
 if (!isset($_SESSION['usuario_id'])) {
     header("Location: ../login.php");
     exit;
 }
 
+// Inclui a conexão com o banco de dados
 include '../BD/conexao.php';
 
+// Reforça a validação de autenticação do usuário
 if (!isset($_SESSION['usuario_id'])) {
     header("Location: login.php");
     exit;
 }
 
+// Processa o cadastro do chamado quando o formulário é enviado
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $maquina_id = $_POST['maquina'];
     $data = $_POST['data'];
@@ -23,10 +28,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $id_funcionario = $_SESSION['usuario_id'];
     $urgencia = $_POST['urgencia'];
 
-
+    // Insere o novo chamado no banco de dados
     $sql = "INSERT INTO chamado (id_funcionario, id_maquina, data_abertura, problema, categoria, progresso, urgencia) VALUES (?, ?, ?, ?, ?, ?, ?)";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("iisssss",$id_funcionario, $maquina_id, $data, $problema, $categoria, $progresso, $urgencia);
+    $stmt->bind_param("iisssss", $id_funcionario, $maquina_id, $data, $problema, $categoria, $progresso, $urgencia);
 
     if ($stmt->execute()) {
         echo "<script>alert('Chamado cadastrado com sucesso!'); window.location.href='../pagina_principal.php';</script>";
@@ -37,6 +42,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->close();
 }
 
+// Busca as máquinas cadastradas para o select do formulário
 $maquinas = [];
 $sql_maquinas = "SELECT id, nome_maquina FROM maquina";
 $result = $conn->query($sql_maquinas);
@@ -46,32 +52,38 @@ if ($result && $result->num_rows > 0) {
     }
 }
 
+// Busca as categorias de chamado para o select do formulário
 $categoria_chamado = [];
 $sql_categoria = "SELECT id, categoria FROM categoria_chamado";
 $result = $conn->query($sql_categoria);
-    if ($result && $result->num_rows > 0) {
-        while ($row = $result->fetch_assoc()) {
-            $categoria_chamado[] = $row;
-        }
+if ($result && $result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $categoria_chamado[] = $row;
     }
+}
 
+// Encerra a conexão com o banco de dados
 $conn->close();
 ?>
 
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
+    <!-- Configurações básicas da página -->
     <meta name="viewport" content="width=device-width, initial-scale=0.9">
     <link rel="stylesheet" href="../assets/css/cadastros.css">
     <meta charset="UTF-8">
     <title>Cadastro de Chamado</title>
-    
 </head>
+
 <body>
 
     <h1>Cadastro de Chamado</h1>
 
+    <!-- Formulário para abertura de um novo chamado -->
     <form class="form-container" action="" method="post">
+
         <label for="maquina">Nome da Máquina:</label>
         <select id="maquina" name="maquina" required>
             <option value="">Selecione uma máquina</option>
@@ -98,7 +110,7 @@ $conn->close();
             <?php endforeach; ?>
         </select>
 
-        <label for="urgencia">Urgência:</label>        
+        <label for="urgencia">Urgência:</label>
         <select name="urgencia" id="urgencia">
             <option value="">Selecione uma urgência</option>
             <option value="Baixa">Baixa</option>
@@ -106,11 +118,11 @@ $conn->close();
             <option value="Alta">Alta</option>
             <option value="Urgente">Urgente</option>
         </select>
-                
+
         <button type="submit">Cadastrar</button>
         <button type="button" onclick="window.location.href='../pagina_principal.php'">Voltar</button>
     </form>
 
 </body>
-</html>
 
+</html>
