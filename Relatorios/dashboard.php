@@ -1,13 +1,15 @@
 <?php
-
+// Inicia sessão e conexão com o banco
 session_start();
 include '../BD/conexao.php';
 
+// Verifica se o usuário está autenticado
 if (!isset($_SESSION['usuario_id'])) {
     header("Location: login.php");
     exit;
 }
 
+// Busca o nível de acesso do usuário logado
 $usuario_id = $_SESSION['usuario_id'];
 $sql = "SELECT nivel_acesso FROM usuario WHERE id = ?";
 $stmt = $conn->prepare($sql);
@@ -16,21 +18,22 @@ $stmt->execute();
 $result = $stmt->get_result();
 $usuario = $result->fetch_assoc();
 
+// Bloqueia acesso para usuários sem permissão
 if ($usuario['nivel_acesso'] > 2) {
-    echo "<script>alert('Você não tem permissão para acessar essa página!'); window.location.href='../pagina_principal.php';</script>";    
+    echo "<script>alert('Você não tem permissão para acessar essa página!'); window.location.href='../pagina_principal.php';</script>";
 }
 
-// Definir período padrão (30 dias)
+// Define filtros de período e setor (com valores padrão)
 $periodo = isset($_GET['periodo']) ? intval($_GET['periodo']) : 30;
 $setor = isset($_GET['setor']) ? $_GET['setor'] : '';
 
-// Validar período
+// Valida períodos permitidos
 $periodos_permitidos = [7, 30, 90, 365];
 if (!in_array($periodo, $periodos_permitidos)) {
     $periodo = 30;
 }
 
-// Preparar condições para consultas - CORREÇÃO AQUI
+// Define condição base para consultas por data
 $condicoes = "c.data_abertura >= DATE_SUB(NOW(), INTERVAL $periodo DAY)";
 $where_condicoes = "WHERE " . $condicoes;
 if (!empty($setor)) {
@@ -38,9 +41,11 @@ if (!empty($setor)) {
     $where_condicoes .= " AND m.setor = '$setor_escape'";
 }
 
+// Inicializa arrays de dados dos gráficos
 $machineData = [];
 $categoryData = [];
 
+// Consulta chamados por máquina
 $query = "
     SELECT m.nome_maquina, COUNT(c.id) as total 
     FROM chamado c 
@@ -58,10 +63,9 @@ if ($stmt) {
         $machineData[] = $row;
     }
     $stmt->close();
-} else {
-    error_log("Erro na consulta de máquinas: " . $conn->error);
 }
 
+// Consulta chamados por categoria
 $query = "
     SELECT cat.categoria, COUNT(c.id) as total 
     FROM chamado c 
@@ -80,11 +84,9 @@ if ($stmt) {
         $categoryData[] = $row;
     }
     $stmt->close();
-} else {
-    error_log("Erro na consulta de categorias: " . $conn->error);
 }
 
-// Dados para gráfico de timeline (evolução temporal)
+// Consulta evolução temporal de chamados
 $timelineData = [];
 $query = "
     SELECT 
@@ -99,15 +101,11 @@ $query = "
 ";
 
 $result = $conn->query($query);
-if ($result) {
-    while ($row = $result->fetch_assoc()) {
-        $timelineData[] = $row;
-    }
-} else {
-    error_log("Erro na consulta de timeline: " . $conn->error);
+while ($row = $result->fetch_assoc()) {
+    $timelineData[] = $row;
 }
 
-// Dados para gráfico de tempo de resolução
+// Consulta tempo médio de resolução
 $resolutionData = [];
 $query = "
     SELECT 
@@ -124,131 +122,123 @@ $query = "
 ";
 
 $result = $conn->query($query);
-if ($result) {
-    while ($row = $result->fetch_assoc()) {
-        $resolutionData[] = $row;
-    }
-} else {
-    error_log("Erro na consulta de resolução: " . $conn->error);
+while ($row = $result->fetch_assoc()) {
+    $resolutionData[] = $row;
 }
 
-// Buscar estatísticas totais - CORREÇÃO DAS CONSULTAS
+// Estatísticas gerais do dashboard
 $totalChamados = 0;
 $chamadosAbertos = 0;
 $maquinaMaisChamados = '';
 $categoriaPrincipal = '';
 
-// Consulta total de chamados - CORREÇÃO
+// Total de chamados
 $query = "SELECT COUNT(*) as total FROM chamado c JOIN maquina m ON c.id_maquina = m.id WHERE $condicoes" . (!empty($setor) ? " AND m.setor = '" . $conn->real_escape_string($setor) . "'" : "");
 $result = $conn->query($query);
-if ($result && $row = $result->fetch_assoc()) {
-    $totalChamados = $row['total'];
-}
+$totalChamados = $result->fetch_assoc()['total'] ?? 0;
 
-// Consulta chamados abertos - CORREÇÃO
+// Total de chamados abertos
 $query = "SELECT COUNT(*) as abertos FROM chamado c JOIN maquina m ON c.id_maquina = m.id WHERE c.data_fechamento IS NULL AND $condicoes" . (!empty($setor) ? " AND m.setor = '" . $conn->real_escape_string($setor) . "'" : "");
 $result = $conn->query($query);
-if ($result && $row = $result->fetch_assoc()) {
-    $chamadosAbertos = $row['abertos'];
-}
+$chamadosAbertos = $result->fetch_assoc()['abertos'] ?? 0;
 
-if (!empty($machineData)) {
-    $maquinaMaisChamados = $machineData[0]['nome_maquina'];
-}
+// Define destaques principais
+$maquinaMaisChamados = $machineData[0]['nome_maquina'] ?? '';
+$categoriaPrincipal = $categoryData[0]['categoria'] ?? '';
 
-if (!empty($categoryData)) {
-    $categoriaPrincipal = $categoryData[0]['categoria'];
-}
-
-// Buscar setores disponíveis para o filtro
+// Busca setores disponíveis para filtro
 $setores = [];
 $query = "SELECT DISTINCT setor FROM maquina WHERE setor IS NOT NULL AND setor != '' ORDER BY setor";
 $result = $conn->query($query);
-if ($result) {
-    while ($row = $result->fetch_assoc()) {
-        $setores[] = $row['setor'];
-    }
+while ($row = $result->fetch_assoc()) {
+    $setores[] = $row['setor'];
 }
 
-// Processar exportação de relatório
+// Exportação do relatório em CSV
 if (isset($_GET['export'])) {
     header('Content-Type: text/csv; charset=utf-8');
     header('Content-Disposition: attachment; filename=relatorio_chamados.csv');
-    
+
     $output = fopen('php://output', 'w');
-    
-    // Cabeçalho do CSV
     fputcsv($output, ['Relatório de Chamados - Período: ' . $periodo . ' dias'], ';');
-    fputcsv($output, []); // Linha vazia
+    fputcsv($output, []);
     fputcsv($output, ['Máquina', 'Total de Chamados'], ';');
-    
+
     foreach ($machineData as $maquina) {
         fputcsv($output, [$maquina['nome_maquina'], $maquina['total']], ';');
     }
-    
-    fputcsv($output, []); // Linha vazia
+
+    fputcsv($output, []);
     fputcsv($output, ['Categoria', 'Total de Chamados'], ';');
-    
+
     foreach ($categoryData as $categoria) {
         fputcsv($output, [$categoria['categoria'], $categoria['total']], ';');
     }
-    
+
     fclose($output);
     exit;
 }
 
-// Converter dados para JSON para uso no JavaScript
+// Converte dados para JSON (uso no JavaScript)
 $machineDataJson = json_encode($machineData);
 $categoryDataJson = json_encode($categoryData);
 $timelineDataJson = json_encode($timelineData);
 $resolutionDataJson = json_encode($resolutionData);
 ?>
 
+
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
+    <!-- Metadados e recursos do dashboard -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../assets/css/dashboard.css">
     <title>Dashboard de Chamados</title>
+
+    <!-- Biblioteca Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        
-    </style>
 </head>
+
 <body>
+    <!-- Cabeçalho do dashboard -->
     <header>
         <h1><span class="icon">📊</span> Dashboard de Chamados</h1>
         <button type="button" onclick="window.location.href='../pagina_principal.php'">Voltar</button>
     </header>
-    
+
+    <!-- Cards de estatísticas gerais -->
     <div class="stats-grid">
         <div class="stat-card">
             <div class="stat-label">Total de Chamados</div>
             <div class="stat-value"><?php echo $totalChamados; ?></div>
             <div class="stat-label"><?php echo $periodo; ?> dias</div>
         </div>
+
         <div class="stat-card">
             <div class="stat-label">Chamados Abertos</div>
             <div class="stat-value"><?php echo $chamadosAbertos; ?></div>
             <div class="stat-label">Em andamento</div>
         </div>
+
         <div class="stat-card">
             <div class="stat-label">Máquina com Mais Chamados</div>
             <div class="stat-value"><?php echo htmlspecialchars($maquinaMaisChamados); ?></div>
             <div class="stat-label">
-                <?php 
+                <?php
                 if (!empty($machineData)) {
                     echo $machineData[0]['total'] . ' chamados';
                 }
                 ?>
             </div>
         </div>
+
         <div class="stat-card">
             <div class="stat-label">Categoria Principal</div>
             <div class="stat-value"><?php echo htmlspecialchars($categoriaPrincipal); ?></div>
             <div class="stat-label">
-                <?php 
+                <?php
                 if (!empty($categoryData) && $totalChamados > 0) {
                     $percent = round(($categoryData[0]['total'] / $totalChamados) * 100);
                     echo $percent . '% dos chamados';
@@ -257,31 +247,37 @@ $resolutionDataJson = json_encode($resolutionData);
             </div>
         </div>
     </div>
-    
+
+    <!-- Formulário de filtros do dashboard -->
     <form method="GET" action="">
         <div class="controls">
+            <!-- Filtro de período -->
             <select id="time-range" name="periodo">
                 <option value="7" <?php echo $periodo == 7 ? 'selected' : ''; ?>>Últimos 7 dias</option>
                 <option value="30" <?php echo $periodo == 30 ? 'selected' : ''; ?>>Últimos 30 dias</option>
                 <option value="90" <?php echo $periodo == 90 ? 'selected' : ''; ?>>Últimos 3 meses</option>
                 <option value="365" <?php echo $periodo == 365 ? 'selected' : ''; ?>>Último ano</option>
             </select>
-            
+
+            <!-- Filtro de setor -->
             <select id="setor-filter" name="setor">
                 <option value="">Todos os setores</option>
                 <?php foreach ($setores as $s): ?>
-                <option value="<?php echo htmlspecialchars($s); ?>" <?php echo $setor == $s ? 'selected' : ''; ?>>
-                    <?php echo htmlspecialchars($s); ?>
-                </option>
+                    <option value="<?php echo htmlspecialchars($s); ?>" <?php echo $setor == $s ? 'selected' : ''; ?>>
+                        <?php echo htmlspecialchars($s); ?>
+                    </option>
                 <?php endforeach; ?>
             </select>
-            
+
+            <!-- Ações -->
             <button type="submit" id="btn-apply">Aplicar Filtros</button>
             <button type="button" id="btn-export" onclick="exportRelatorio()">Exportar Relatório</button>
         </div>
     </form>
-    
+
+    <!-- Área principal dos gráficos -->
     <div class="dashboard">
+        <!-- Gráfico: Chamados por Máquina -->
         <div class="card">
             <div class="card-header">
                 <h2 class="card-title"><span class="icon">🔧</span> Chamados por Máquina</h2>
@@ -290,7 +286,8 @@ $resolutionDataJson = json_encode($resolutionData);
                 <canvas id="machineChart"></canvas>
             </div>
         </div>
-        
+
+        <!-- Gráfico: Chamados por Categoria -->
         <div class="card">
             <div class="card-header">
                 <h2 class="card-title"><span class="icon">📁</span> Chamados por Categoria</h2>
@@ -299,7 +296,8 @@ $resolutionDataJson = json_encode($resolutionData);
                 <canvas id="categoryChart"></canvas>
             </div>
         </div>
-        
+
+        <!-- Gráfico: Evolução temporal -->
         <div class="card">
             <div class="card-header">
                 <h2 class="card-title"><span class="icon">📈</span> Evolução de Chamados</h2>
@@ -308,7 +306,8 @@ $resolutionDataJson = json_encode($resolutionData);
                 <canvas id="timelineChart"></canvas>
             </div>
         </div>
-        
+
+        <!-- Gráfico: Tempo médio de resolução -->
         <div class="card">
             <div class="card-header">
                 <h2 class="card-title"><span class="icon">⏱️</span> Tempo Médio de Resolução</h2>
@@ -320,36 +319,22 @@ $resolutionDataJson = json_encode($resolutionData);
     </div>
 
     <script>
-        // Dados do PHP convertidos para JavaScript
+        /* ===========================
+           Dados recebidos do PHP
+        ============================ */
         const machineDataFromPHP = <?php echo $machineDataJson; ?>;
         const categoryDataFromPHP = <?php echo $categoryDataJson; ?>;
         const timelineDataFromPHP = <?php echo $timelineDataJson; ?>;
         const resolutionDataFromPHP = <?php echo $resolutionDataJson; ?>;
 
-        // Preparar dados para os gráficos
+        /* ===========================
+           Configuração dos datasets
+        ============================ */
         const machineData = {
             labels: machineDataFromPHP.map(item => item.nome_maquina),
             datasets: [{
                 label: 'Número de Chamados',
                 data: machineDataFromPHP.map(item => item.total),
-                backgroundColor: [
-                    'rgba(231, 76, 60, 0.8)',
-                    'rgba(241, 196, 15, 0.8)',
-                    'rgba(52, 152, 219, 0.8)',
-                    'rgba(46, 204, 113, 0.8)',
-                    'rgba(155, 89, 182, 0.8)',
-                    'rgba(230, 126, 34, 0.8)',
-                    'rgba(26, 188, 156, 0.8)'
-                ],
-                borderColor: [
-                    'rgba(231, 76, 60, 1)',
-                    'rgba(241, 196, 15, 1)',
-                    'rgba(52, 152, 219, 1)',
-                    'rgba(46, 204, 113, 1)',
-                    'rgba(155, 89, 182, 1)',
-                    'rgba(230, 126, 34, 1)',
-                    'rgba(26, 188, 156, 1)'
-                ],
                 borderWidth: 1
             }]
         };
@@ -359,167 +344,67 @@ $resolutionDataJson = json_encode($resolutionData);
             datasets: [{
                 label: 'Chamados por Categoria',
                 data: categoryDataFromPHP.map(item => item.total),
-                backgroundColor: [
-                    'rgba(52, 152, 219, 0.7)',
-                    'rgba(46, 204, 113, 0.7)',
-                    'rgba(155, 89, 182, 0.7)',
-                    'rgba(241, 196, 15, 0.7)',
-                    'rgba(230, 126, 34, 0.7)',
-                    'rgba(231, 76, 60, 0.7)',
-                    'rgba(26, 188, 156, 0.7)'
-                ],
-                borderColor: [
-                    'rgba(52, 152, 219, 1)',
-                    'rgba(46, 204, 113, 1)',
-                    'rgba(155, 89, 182, 1)',
-                    'rgba(241, 196, 15, 1)',
-                    'rgba(230, 126, 34, 1)',
-                    'rgba(231, 76, 60, 1)',
-                    'rgba(26, 188, 156, 1)'
-                ],
                 borderWidth: 1
             }]
         };
 
-        // Preparar dados de timeline
-        const timelineLabels = timelineDataFromPHP.map(item => {
-            const date = new Date(item.data);
-            return date.toLocaleDateString('pt-BR');
-        });
+        const timelineLabels = timelineDataFromPHP.map(item =>
+            new Date(item.data).toLocaleDateString('pt-BR')
+        );
 
         const timelineData = {
             labels: timelineLabels,
-            datasets: [{
-                label: 'Chamados Abertos',
-                data: timelineDataFromPHP.map(item => item.total_abertos),
-                borderColor: 'rgba(231, 76, 60, 1)',
-                backgroundColor: 'rgba(231, 76, 60, 0.1)',
-                tension: 0.4,
-                fill: true
-            }, {
-                label: 'Chamados Resolvidos',
-                data: timelineDataFromPHP.map(item => item.total_fechados),
-                borderColor: 'rgba(46, 204, 113, 1)',
-                backgroundColor: 'rgba(46, 204, 113, 0.1)',
-                tension: 0.4,
-                fill: true
-            }]
+            datasets: [
+                {
+                    label: 'Chamados Abertos',
+                    data: timelineDataFromPHP.map(item => item.total_abertos),
+                    tension: 0.4,
+                    fill: true
+                },
+                {
+                    label: 'Chamados Resolvidos',
+                    data: timelineDataFromPHP.map(item => item.total_fechados),
+                    tension: 0.4,
+                    fill: true
+                }
+            ]
         };
 
-        // Preparar dados de tempo de resolução
         const resolutionData = {
             labels: resolutionDataFromPHP.map(item => item.nome_maquina),
             datasets: [{
                 label: 'Tempo Médio (dias)',
-                data: resolutionDataFromPHP.map(item => parseFloat(item.tempo_medio_dias).toFixed(1)),
-                backgroundColor: 'rgba(52, 152, 219, 0.7)',
-                borderColor: 'rgba(52, 152, 219, 1)',
+                data: resolutionDataFromPHP.map(item =>
+                    parseFloat(item.tempo_medio_dias).toFixed(1)
+                ),
                 borderWidth: 1
             }]
         };
 
-        // Inicializar os gráficos
-        let machineChart, categoryChart, timelineChart, resolutionChart;
-
-        window.onload = function() {
-            const machineCtx = document.getElementById('machineChart').getContext('2d');
-            const categoryCtx = document.getElementById('categoryChart').getContext('2d');
-            const timelineCtx = document.getElementById('timelineChart').getContext('2d');
-            const resolutionCtx = document.getElementById('resolutionChart').getContext('2d');
-            
-            machineChart = new Chart(machineCtx, {
-                type: 'bar',
-                data: machineData,
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: false
-                        },
-                        title: {
-                            display: true,
-                            text: 'Chamados por Máquina (Últimos <?php echo $periodo; ?> dias)'
-                        }
-                    }
-                }
-            });
-            
-            categoryChart = new Chart(categoryCtx, {
-                type: 'doughnut',
-                data: categoryData,
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        title: {
-                            display: true,
-                            text: 'Distribuição por Categoria'
-                        }
-                    }
-                }
-            });
-            
-            timelineChart = new Chart(timelineCtx, {
-                type: 'line',
-                data: timelineData,
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        title: {
-                            display: true,
-                            text: 'Evolução de Chamados'
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
-                    }
-                }
-            });
-            
-            resolutionChart = new Chart(resolutionCtx, {
-                type: 'bar',
-                data: resolutionData,
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: false
-                        },
-                        title: {
-                            display: true,
-                            text: 'Tempo Médio de Resolução (dias)'
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            title: {
-                                display: true,
-                                text: 'Dias'
-                            }
-                        }
-                    }
-                }
-            });
+        /* ===========================
+           Inicialização dos gráficos
+        ============================ */
+        window.onload = function () {
+            new Chart(document.getElementById('machineChart'), { type: 'bar', data: machineData });
+            new Chart(document.getElementById('categoryChart'), { type: 'doughnut', data: categoryData });
+            new Chart(document.getElementById('timelineChart'), { type: 'line', data: timelineData });
+            new Chart(document.getElementById('resolutionChart'), { type: 'bar', data: resolutionData });
         };
 
+        /* ===========================
+           Exportação de relatório
+        ============================ */
         function exportRelatorio() {
             const periodo = document.getElementById('time-range').value;
             const setor = document.getElementById('setor-filter').value;
-            
+
             let url = './exportar_relatorio.php?export=excel&periodo=' + periodo;
-            
             if (setor) {
                 url += '&setor=' + encodeURIComponent(setor);
             }
-            
             window.location.href = url;
         }
     </script>
 </body>
+
 </html>
