@@ -1,9 +1,15 @@
 <?php
+
+// Inclui a conexão com o banco de dados
 include '../BD/conexao.php';
 
+// Exibe o formulário de conclusão caso a solução ainda não tenha sido enviada
 if (!isset($_POST['solucao'])) {
+
+    // Obtém e valida o ID do chamado via GET
     $id = intval($_GET['id'] ?? 0);
     
+    // Verifica se o chamado existe no banco de dados
     $stmt = $conn->prepare("SELECT id FROM chamado WHERE id = ?");
     $stmt->bind_param("i", $id);
     $stmt->execute();
@@ -12,6 +18,7 @@ if (!isset($_POST['solucao'])) {
     if ($stmt->num_rows === 0) {
         die("ID de chamado inválido ou não encontrado");
     }
+
     $stmt->close();
 ?>
 <!DOCTYPE html>
@@ -20,6 +27,7 @@ if (!isset($_POST['solucao'])) {
     <meta charset="UTF-8">
     <title>Concluir Chamado</title>
     <style>
+        /* Estilos básicos da página de conclusão do chamado */
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #f0f8ff;
@@ -71,6 +79,8 @@ if (!isset($_POST['solucao'])) {
 <body>
     <div class="form-container">
         <h1>Concluir Chamado #<?= $id ?></h1>
+
+        <!-- Formulário para informar a solução do chamado -->
         <form method="post" action="mover_concluido.php">
             <input type="hidden" name="id" value="<?= $id ?>">
             <label for="solucao">Descreva a solução:</label>
@@ -81,10 +91,14 @@ if (!isset($_POST['solucao'])) {
 </body>
 </html>
 <?php
+    // Interrompe a execução após exibir o formulário
     exit;
 }
 
+// Processa a conclusão do chamado após o envio do formulário
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+    // Obtém e valida os dados enviados
     $id = intval($_POST['id']);
     $solucao = trim($_POST['solucao']);
     
@@ -92,6 +106,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         die("A descrição da solução é obrigatória");
     }
 
+    // Atualiza o chamado como concluído, registrando data e solução
     $stmt = $conn->prepare("UPDATE chamado SET progresso = 'Concluido', data_fechamento = ?, solucao = ? WHERE id = ?");
     $data_fechamento = date('Y-m-d');
     $stmt->bind_param("ssi", $data_fechamento, $solucao, $id);
@@ -104,5 +119,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
+// Encerra a conexão com o banco de dados
 $conn->close();
 ?>
